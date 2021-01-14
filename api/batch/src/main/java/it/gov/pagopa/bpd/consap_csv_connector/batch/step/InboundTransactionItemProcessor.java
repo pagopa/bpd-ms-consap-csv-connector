@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.step;
 
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.Transaction;
+import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * Implementation of the ItemProcessor interface, used to process instances of InboundTransaction,
- * to be mapped into a normalized version defined as instances of Transaction
+ * to be mapped into a normalized version defined as instances of PaymentInfo
  */
 
 @RequiredArgsConstructor
@@ -26,10 +26,10 @@ public class InboundTransactionItemProcessor implements ItemProcessor<InboundTra
     private static final Validator validator = factory.getValidator();
 
     /**
-     * Validates the input {@link InboundTransaction}, and maps it to an instance of Transaction
+     * Validates the input {@link InboundTransaction}, and maps it to an instance of PaymentInfo
      * @param inboundTransaction
      *              instance of {@link InboundTransaction} from the read phase of the step
-     * @return instance of  {@link Transaction}, mapped from a normalized instance of {@link InboundTransaction}
+     * @return instance of  {@link PaymentInfo}, mapped from a normalized instance of {@link InboundTransaction}
      * @throws ConstraintViolationException
      */
     @Override

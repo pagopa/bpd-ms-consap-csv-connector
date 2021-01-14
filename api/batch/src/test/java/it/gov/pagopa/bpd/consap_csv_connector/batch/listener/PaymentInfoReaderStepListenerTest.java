@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 
-public class TransactionReaderStepListenerTest extends BaseTest {
+public class PaymentInfoReaderStepListenerTest extends BaseTest {
 
     File successFile;
 

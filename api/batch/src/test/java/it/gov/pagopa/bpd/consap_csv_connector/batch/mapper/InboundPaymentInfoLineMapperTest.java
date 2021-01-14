@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.file.FlatFileParseException;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 
-public class InboundTransactionLineMapperTest {
+public class InboundPaymentInfoLineMapperTest {
 
-    public InboundTransactionLineMapperTest(){
+    public InboundPaymentInfoLineMapperTest(){
         MockitoAnnotations.initMocks(this);
     }
 

@@ -1,25 +1,19 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.step;
 
 import eu.sia.meda.BaseTest;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.Transaction;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 
 import javax.validation.ConstraintViolationException;
-import java.math.BigDecimal;
 
 /**
  * Class for unit testing of the InboundTransactionItemProcessor class
  */
-public class InboundTransactionItemProcessorTest extends BaseTest {
+public class InboundPaymentInfoItemProcessorTest extends BaseTest {
 
     private InboundTransactionItemProcessor inboundTransactionItemProcessor;
 

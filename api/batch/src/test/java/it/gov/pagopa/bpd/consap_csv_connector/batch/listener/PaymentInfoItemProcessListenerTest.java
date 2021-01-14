@@ -14,7 +14,7 @@ import java.io.File;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class TransactionItemProcessListenerTest {
+public class PaymentInfoItemProcessListenerTest {
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder(

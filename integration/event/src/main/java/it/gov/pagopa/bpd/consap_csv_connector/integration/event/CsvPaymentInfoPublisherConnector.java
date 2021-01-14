@@ -3,21 +3,21 @@ package it.gov.pagopa.bpd.consap_csv_connector.integration.event;
 import eu.sia.meda.event.BaseEventConnector;
 import eu.sia.meda.event.transformer.IEventRequestTransformer;
 import eu.sia.meda.event.transformer.IEventResponseTransformer;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.Transaction;
+import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
 import org.springframework.stereotype.Service;
 
 /**
  * Class extending the MEDA {@link BaseEventConnector}, is responsible for calling
- * a Kafka outbound channel with messagescontaining a json mapped on the Transaction class
+ * a Kafka outbound channel with messagescontaining a json mapped on the PaymentInfo class
  */
 
 @Service
-public class CsvTransactionPublisherConnector extends BaseEventConnector<Transaction, Boolean, Transaction, Void> {
+public class CsvPaymentInfoPublisherConnector extends BaseEventConnector<PaymentInfo, Boolean, PaymentInfo, Void> {
 
     /**
      *
-     * @param transaction
-                Transaction instance to be used as message content
+     * @param paymentInfo
+                PaymentInfo instance to be used as message content
      * @param requestTransformer
                 Trannsformer for the request data
      * @param responseTransformer
@@ -27,11 +27,11 @@ public class CsvTransactionPublisherConnector extends BaseEventConnector<Transac
      * @return Exit status for the call
      */
     public Boolean doCall(
-            Transaction transaction, IEventRequestTransformer<Transaction,
-            Transaction> requestTransformer,
+            PaymentInfo paymentInfo, IEventRequestTransformer<PaymentInfo,
+            PaymentInfo> requestTransformer,
             IEventResponseTransformer<Void, Boolean> responseTransformer,
             Object... args) {
-        return this.call(transaction, requestTransformer, responseTransformer, args);
+        return this.call(paymentInfo, requestTransformer, responseTransformer, args);
     }
 
 }

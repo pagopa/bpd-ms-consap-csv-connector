@@ -5,8 +5,8 @@ import eu.sia.meda.core.model.ApplicationContext;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.TransactionItemWriterListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.Transaction;
-import it.gov.pagopa.bpd.consap_csv_connector.service.CsvTransactionPublisherService;
+import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
+import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
 import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 
 /**
- * Implementation of {@link ItemWriter}, to be used for read/processed Transaction files
+ * Implementation of {@link ItemWriter}, to be used for read/processed PaymentInfo files
  */
 
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ public class TransactionWriter implements ItemWriter<InboundTransaction> {
     private static final String BATCH_CSV_CONNECTOR_NAME = "bpd-ms-consap-csv-connector";
 
     private final WriterTrackerService writerTrackerService;
-    private final CsvTransactionPublisherService csvTransactionPublisherService;
+    private final CsvPaymentInfoPublisherService csvPaymentInfoPublisherService;
     private TransactionItemWriterListener transactionItemWriterListener;
     private Executor executor;
     private final TransactionMapper mapper;
@@ -40,9 +40,9 @@ public class TransactionWriter implements ItemWriter<InboundTransaction> {
     private Integer checkpointFrequency;
 
     /**
-     * Implementation of the {@link ItemWriter} write method, used for {@link Transaction} as the processed class
+     * Implementation of the {@link ItemWriter} write method, used for {@link PaymentInfo} as the processed class
      *
-     * @param inboundTransactions list of {@link Transaction} from the process phase of a reader to be sent on an outbound Kafka channel
+     * @param inboundTransactions list of {@link PaymentInfo} from the process phase of a reader to be sent on an outbound Kafka channel
      * @throws Exception
      */
     @Override
@@ -64,8 +64,8 @@ public class TransactionWriter implements ItemWriter<InboundTransaction> {
                         fileName,
                         inboundTransaction.getLineNumber()));
                 BaseContextHolder.forceSetApplicationContext(applicationContext);
-                Transaction transaction = mapper.map(inboundTransaction, applyHashing);
-                csvTransactionPublisherService.publishTransactionEvent(transaction);
+                PaymentInfo paymentInfo = mapper.map(inboundTransaction, applyHashing);
+                csvPaymentInfoPublisherService.publishPaymentInfoEvent(paymentInfo);
             } catch (Exception e) {
                 transactionItemWriterListener.onWriteError(e, inboundTransaction);
             }

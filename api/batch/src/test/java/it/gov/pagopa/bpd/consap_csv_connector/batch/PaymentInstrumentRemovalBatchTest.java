@@ -6,9 +6,9 @@ import eu.sia.meda.event.configuration.ArchEventConfigurationService;
 import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.config.CsvPaymentInstrumentRemovalTestConfig;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvTransactionPublisherConnector;
+import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvPaymentInfoPublisherConnector;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.PGPDecryptUtil;
-import it.gov.pagopa.bpd.consap_csv_connector.service.CsvTransactionPublisherService;
+import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
@@ -123,10 +123,10 @@ public class PaymentInstrumentRemovalBatchTest {
     private JobRepositoryTestUtils jobRepositoryTestUtils;
 
     @SpyBean
-    private CsvTransactionPublisherConnector csvTransactionPublisherConnectorSpy;
+    private CsvPaymentInfoPublisherConnector csvPaymentInfoPublisherConnectorSpy;
 
     @SpyBean
-    private CsvTransactionPublisherService csvTransactionPublisherServiceSpy;
+    private CsvPaymentInfoPublisherService csvPaymentInfoPublisherServiceSpy;
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder(
@@ -137,8 +137,8 @@ public class PaymentInstrumentRemovalBatchTest {
     @Before
     public void setUp() {
         Mockito.reset(
-                csvTransactionPublisherConnectorSpy,
-                csvTransactionPublisherServiceSpy);
+                csvPaymentInfoPublisherConnectorSpy,
+                csvPaymentInfoPublisherServiceSpy);
         ObjectName kafkaServerMbeanName = new ObjectName("kafka.server:type=app-info,id=0");
         MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
         if (mBeanServer.isRegistered(kafkaServerMbeanName)) {
@@ -182,8 +182,8 @@ public class PaymentInstrumentRemovalBatchTest {
                             resolver.getResources("classpath:/test-encrypt-pm/**/error")[0].getFile(),
                             new String[]{"pgp"},false).size());
 
-            Mockito.verifyZeroInteractions(csvTransactionPublisherServiceSpy);
-            Mockito.verifyZeroInteractions(csvTransactionPublisherConnectorSpy);
+            Mockito.verifyZeroInteractions(csvPaymentInfoPublisherServiceSpy);
+            Mockito.verifyZeroInteractions(csvPaymentInfoPublisherConnectorSpy);
 
         } catch (Exception e) {
             e.printStackTrace();

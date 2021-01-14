@@ -3,7 +3,7 @@ package it.gov.pagopa.bpd.consap_csv_connector.batch.mapper;
 import it.gov.pagopa.bpd.consap_csv_connector.connector.payment_instrument.model.PaymentInstrumentData;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInstrument;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.Transaction;
+import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
- * Class to be used to map a {@link Transaction} from an {@link InboundTransaction}
+ * Class to be used to map a {@link PaymentInfo} from an {@link InboundTransaction}
  */
 
 @Service

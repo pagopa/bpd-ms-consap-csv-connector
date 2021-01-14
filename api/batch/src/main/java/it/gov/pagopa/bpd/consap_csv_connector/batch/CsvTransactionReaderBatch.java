@@ -64,7 +64,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Configuration of a scheduled batch job to read and decrypt .pgp files with csv content,
- * to be processed in instances of Transaction class, to be sent in an outbound Kafka channel
+ * to be processed in instances of PaymentInfo class, to be sent in an outbound Kafka channel
  */
 
 @Data
@@ -343,7 +343,7 @@ public class CsvTransactionReaderBatch {
 
     /**
      *
-     * @return instance of the job to process and archive .pgp files containing Transaction data in csv format
+     * @return instance of the job to process and archive .pgp files containing PaymentInfo data in csv format
      */
     public FlowJobBuilder transactionJobBuilder() throws Exception {
         return jobBuilderFactory.get(jobName)

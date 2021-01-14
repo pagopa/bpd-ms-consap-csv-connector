@@ -1,7 +1,6 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.listener;
 
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.Transaction;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;

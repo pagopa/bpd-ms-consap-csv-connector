@@ -4,8 +4,8 @@ import eu.sia.meda.BaseTest;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.TransactionItemWriterListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.Transaction;
-import it.gov.pagopa.bpd.consap_csv_connector.service.CsvTransactionPublisherService;
+import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
+import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
 import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
 import lombok.SneakyThrows;
 import org.junit.Assert;
@@ -25,10 +25,10 @@ import java.util.concurrent.Executors;
 /**
  * Class for unit testing of the TransactionWriter class
  */
-public class TransactionWriterTest extends BaseTest {
+public class PaymentInfoWriterTest extends BaseTest {
 
     @Mock
-    private CsvTransactionPublisherService csvTransactionPublisherServiceMock;
+    private CsvPaymentInfoPublisherService csvPaymentInfoPublisherServiceMock;
 
     @Mock
     private WriterTrackerService writerTrackerServiceMock;
@@ -44,16 +44,16 @@ public class TransactionWriterTest extends BaseTest {
 
     @Before
     public void initTest() {
-        Mockito.reset(csvTransactionPublisherServiceMock, mapperSpy);
+        Mockito.reset(csvPaymentInfoPublisherServiceMock, mapperSpy);
         transactionWriter = new TransactionWriter(
-                writerTrackerServiceMock, csvTransactionPublisherServiceMock, mapperSpy);
+                writerTrackerServiceMock, csvPaymentInfoPublisherServiceMock, mapperSpy);
         transactionWriter.setTransactionItemWriterListener(transactionItemWriterListenerMock);
         transactionWriter.setExecutor(Executors.newSingleThreadExecutor());
         transactionWriter.setApplyHashing(true);
         transactionWriter.setCheckpointFrequency(3);
         transactionWriter.setEnableCheckpointFrequency(true);
-        BDDMockito.doNothing().when(csvTransactionPublisherServiceMock)
-                .publishTransactionEvent(Mockito.any(Transaction.class));
+        BDDMockito.doNothing().when(csvPaymentInfoPublisherServiceMock)
+                .publishPaymentInfoEvent(Mockito.any(PaymentInfo.class));
         BDDMockito.doNothing().when(writerTrackerServiceMock)
                 .addCountDownLatch(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
@@ -66,14 +66,14 @@ public class TransactionWriterTest extends BaseTest {
     public void testWriterNullList() {
         exceptionRule.expect(NullPointerException.class);
         transactionWriter.write(null);
-        BDDMockito.verifyZeroInteractions(csvTransactionPublisherServiceMock);
+        BDDMockito.verifyZeroInteractions(csvPaymentInfoPublisherServiceMock);
     }
 
     @Test
     public void testWriterEmptyList() {
         try {
             transactionWriter.write(Collections.emptyList());
-            BDDMockito.verifyZeroInteractions(csvTransactionPublisherServiceMock);
+            BDDMockito.verifyZeroInteractions(csvPaymentInfoPublisherServiceMock);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -85,8 +85,8 @@ public class TransactionWriterTest extends BaseTest {
         try {
             transactionWriter.write(Collections.singletonList(getInboundTransaction()));
             Thread.sleep(1000);
-            BDDMockito.verify(csvTransactionPublisherServiceMock, Mockito.times(1))
-                    .publishTransactionEvent(Mockito.eq(getTransaction()));
+            BDDMockito.verify(csvPaymentInfoPublisherServiceMock, Mockito.times(1))
+                    .publishPaymentInfoEvent(Mockito.eq(getTransaction()));
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -98,8 +98,8 @@ public class TransactionWriterTest extends BaseTest {
         try {
             transactionWriter.write(Collections.nCopies(5,getInboundTransaction()));
             Thread.sleep(1000);
-            BDDMockito.verify(csvTransactionPublisherServiceMock, Mockito.times(5))
-                    .publishTransactionEvent(Mockito.eq(getTransaction()));
+            BDDMockito.verify(csvPaymentInfoPublisherServiceMock, Mockito.times(5))
+                    .publishPaymentInfoEvent(Mockito.eq(getTransaction()));
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -128,8 +128,8 @@ public class TransactionWriterTest extends BaseTest {
                 .build();
     }
 
-    protected Transaction getTransaction() {
-        return Transaction.builder()
+    protected PaymentInfo getTransaction() {
+        return PaymentInfo.builder()
                 .idTrxAcquirer("1")
                 .acquirerCode("001")
                 .trxDate("2020-04-09T16:22:45.304Z")

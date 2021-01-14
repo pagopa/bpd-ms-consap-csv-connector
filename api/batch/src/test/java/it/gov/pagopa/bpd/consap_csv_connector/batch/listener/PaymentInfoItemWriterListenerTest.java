@@ -1,7 +1,6 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.listener;
 
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.Transaction;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -16,7 +15,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
-public class TransactionItemWriterListenerTest {
+public class PaymentInfoItemWriterListenerTest {
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder(

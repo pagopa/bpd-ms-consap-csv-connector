@@ -29,7 +29,7 @@ public class InboundPaymentInstrumentItemProcessor
     private Set<InboundPaymentInstrument> inboundPaymentInstruments = new HashSet<>();
 
     /**
-     * Validates the input {@link InboundPaymentInstrument}, and maps it to an instance of Transaction
+     * Validates the input {@link InboundPaymentInstrument}, and maps it to an instance of PaymentInfo
      * @param inboundPaymentInstrument
      *              instance of {@link InboundPaymentInstrument} from the read phase of the step
      * @return instance of {@link InboundPaymentInstrument}, if valid
