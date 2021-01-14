@@ -2,8 +2,8 @@ package it.gov.pagopa.bpd.consap_csv_connector.batch.step;
 
 import eu.sia.meda.BaseTest;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.PGPDecryptUtil;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundTransactionFieldSetMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoFieldSetMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import lombok.SneakyThrows;
 import org.junit.After;
 import org.junit.Assert;
@@ -37,24 +37,22 @@ public class PGPFlatFileItemReaderTest extends BaseTest {
             new File(getClass().getResource("/test-encrypt").getFile()));
 
 
-    public LineTokenizer transactionLineTokenizer() {
+    public LineTokenizer paymentInfoLineTokenizer() {
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
         delimitedLineTokenizer.setDelimiter(";");
         delimitedLineTokenizer.setNames(
-                "codice_acquirer", "tipo_operazione", "tipo_circuito", "PAN", "timestamp", "id_trx_acquirer",
-                "id_trx_issuer", "correlation_id", "importo", "currency", "acquirerID", "merchantID", "terminal_id",
-                "bank_identification_number", "MCC");
+                "uniqueID", "result", "resultReason", "cro", "executionDate");
         return delimitedLineTokenizer;
     }
 
-    public FieldSetMapper<InboundTransaction> transactionFieldSetMapper(String timestamp) {
-        return new InboundTransactionFieldSetMapper(timestamp);
+    public FieldSetMapper<InboundPaymentInfo> paymentInfoFieldSetMapper(String timestamp) {
+        return new InboundPaymentInfoFieldSetMapper(timestamp);
     }
 
-    public LineMapper<InboundTransaction> transactionLineMapper(String timestamp) {
-        DefaultLineMapper<InboundTransaction> lineMapper = new DefaultLineMapper<>();
-        lineMapper.setLineTokenizer(transactionLineTokenizer());
-        lineMapper.setFieldSetMapper(transactionFieldSetMapper(timestamp));
+    public LineMapper<InboundPaymentInfo> paymentInfoLineMapper(String timestamp) {
+        DefaultLineMapper<InboundPaymentInfo> lineMapper = new DefaultLineMapper<>();
+        lineMapper.setLineTokenizer(paymentInfoLineTokenizer());
+        lineMapper.setFieldSetMapper(paymentInfoFieldSetMapper(timestamp));
         return lineMapper;
     }
 
@@ -81,7 +79,7 @@ public class PGPFlatFileItemReaderTest extends BaseTest {
         textTrxPgpFOS.close();
 
         flatFileItemReader.setResource(new UrlResource(tempFolder.getRoot().toURI() + "test-trx.pgp"));
-        flatFileItemReader.setLineMapper(transactionLineMapper("MM/dd/yyyy HH:mm:ss"));
+        flatFileItemReader.setLineMapper(paymentInfoLineMapper("MM/dd/yyyy HH:mm:ss"));
         ExecutionContext executionContext = MetaDataInstanceFactory.createStepExecution().getExecutionContext();
         flatFileItemReader.update(executionContext);
         flatFileItemReader.open(executionContext);
@@ -106,7 +104,7 @@ public class PGPFlatFileItemReaderTest extends BaseTest {
         flatFileItemReader.setResource(new UrlResource("file:"+
                 this.getClass().getResource("/test-encrypt")
                 .getFile() + "/test-trx.csv"));
-        flatFileItemReader.setLineMapper(transactionLineMapper("MM/dd/yyyy HH:mm:ss"));
+        flatFileItemReader.setLineMapper(paymentInfoLineMapper("MM/dd/yyyy HH:mm:ss"));
         ExecutionContext executionContext = MetaDataInstanceFactory.createStepExecution().getExecutionContext();
         flatFileItemReader.update(executionContext);
         flatFileItemReader.open(executionContext);
@@ -139,7 +137,7 @@ public class PGPFlatFileItemReaderTest extends BaseTest {
                 "file:/"+this.getClass().getResource("/test-encrypt").getFile() +
                         "/secretKey.asc", "test", true);
         flatFileItemReader.setResource(new UrlResource(tempFolder.getRoot().toURI() + "test-trx.pgp"));
-        flatFileItemReader.setLineMapper(transactionLineMapper("MM/dd/yyyy HH:mm:ss"));
+        flatFileItemReader.setLineMapper(paymentInfoLineMapper("MM/dd/yyyy HH:mm:ss"));
         ExecutionContext executionContext = MetaDataInstanceFactory.createStepExecution().getExecutionContext();
         flatFileItemReader.update(executionContext);
         exceptionRule.expect(ItemStreamException.class);

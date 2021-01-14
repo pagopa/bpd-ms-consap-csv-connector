@@ -1,5 +1,5 @@
 server:
-  port: ${RTD_CSV_CONNECTOR_PORT:8080}
+  port: $BPD_CONSAP_CSV_CONNECTOR_PORT:8080}
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
   batch:
     job:
       enabled: false
-    initialize-schema: ${RTD_BATCH_INITIALIZE_SCHEMA:always}
+    initialize-schema: ${BPD_BATCH_INITIALIZE_SCHEMA:always}
   main:
     allow-bean-definition-overriding: true
 
@@ -34,4 +34,4 @@ meda:
 
 logging:
   level:
-    it.gov.pagopa.bpd.consap_csv_connector: ${LOG_LEVEL_RTD_CSV_CONNECTOR:DEBUG}
+    it.gov.pagopa.bpd.consap_csv_connector: ${LOG_LEVEL_BPD_CONSAP_CSV_CONNECTOR:DEBUG}

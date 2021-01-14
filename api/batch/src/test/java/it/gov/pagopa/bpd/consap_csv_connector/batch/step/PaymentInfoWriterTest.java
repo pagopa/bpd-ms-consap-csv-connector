@@ -1,9 +1,9 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.step;
 
 import eu.sia.meda.BaseTest;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.TransactionItemWriterListener;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.TransactionMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemWriterListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.PaymentInfoMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
 import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.concurrent.Executors;
 
 /**
- * Class for unit testing of the TransactionWriter class
+ * Class for unit testing of the PaymentInfoWriter class
  */
 public class PaymentInfoWriterTest extends BaseTest {
 
@@ -34,24 +34,24 @@ public class PaymentInfoWriterTest extends BaseTest {
     private WriterTrackerService writerTrackerServiceMock;
 
     @Mock
-    private TransactionItemWriterListener transactionItemWriterListenerMock;
+    private PaymentInfoItemWriterListener paymentInfoItemWriterListenerMock;
 
-    private TransactionWriter transactionWriter;
+    private PaymentInfoWriter paymentInfoWriter;
 
     @Spy
-    private TransactionMapper mapperSpy;
+    private PaymentInfoMapper mapperSpy;
 
 
     @Before
     public void initTest() {
         Mockito.reset(csvPaymentInfoPublisherServiceMock, mapperSpy);
-        transactionWriter = new TransactionWriter(
+        paymentInfoWriter = new PaymentInfoWriter(
                 writerTrackerServiceMock, csvPaymentInfoPublisherServiceMock, mapperSpy);
-        transactionWriter.setTransactionItemWriterListener(transactionItemWriterListenerMock);
-        transactionWriter.setExecutor(Executors.newSingleThreadExecutor());
-        transactionWriter.setApplyHashing(true);
-        transactionWriter.setCheckpointFrequency(3);
-        transactionWriter.setEnableCheckpointFrequency(true);
+        paymentInfoWriter.setPaymentInfoItemWriterListener(paymentInfoItemWriterListenerMock);
+        paymentInfoWriter.setExecutor(Executors.newSingleThreadExecutor());
+        paymentInfoWriter.setApplyHashing(true);
+        paymentInfoWriter.setCheckpointFrequency(3);
+        paymentInfoWriter.setEnableCheckpointFrequency(true);
         BDDMockito.doNothing().when(csvPaymentInfoPublisherServiceMock)
                 .publishPaymentInfoEvent(Mockito.any(PaymentInfo.class));
         BDDMockito.doNothing().when(writerTrackerServiceMock)
@@ -65,14 +65,14 @@ public class PaymentInfoWriterTest extends BaseTest {
     @Test
     public void testWriterNullList() {
         exceptionRule.expect(NullPointerException.class);
-        transactionWriter.write(null);
+        paymentInfoWriter.write(null);
         BDDMockito.verifyZeroInteractions(csvPaymentInfoPublisherServiceMock);
     }
 
     @Test
     public void testWriterEmptyList() {
         try {
-            transactionWriter.write(Collections.emptyList());
+            paymentInfoWriter.write(Collections.emptyList());
             BDDMockito.verifyZeroInteractions(csvPaymentInfoPublisherServiceMock);
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,10 +83,10 @@ public class PaymentInfoWriterTest extends BaseTest {
     @Test
     public void testWriterMonoList() {
         try {
-            transactionWriter.write(Collections.singletonList(getInboundTransaction()));
+            paymentInfoWriter.write(Collections.singletonList(getInboundTransaction()));
             Thread.sleep(1000);
             BDDMockito.verify(csvPaymentInfoPublisherServiceMock, Mockito.times(1))
-                    .publishPaymentInfoEvent(Mockito.eq(getTransaction()));
+                    .publishPaymentInfoEvent(Mockito.eq(getPaymentInfo()));
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -96,55 +96,36 @@ public class PaymentInfoWriterTest extends BaseTest {
     @Test
     public void testWriterMultiList() {
         try {
-            transactionWriter.write(Collections.nCopies(5,getInboundTransaction()));
+            paymentInfoWriter.write(Collections.nCopies(5,getInboundTransaction()));
             Thread.sleep(1000);
             BDDMockito.verify(csvPaymentInfoPublisherServiceMock, Mockito.times(5))
-                    .publishPaymentInfoEvent(Mockito.eq(getTransaction()));
+                    .publishPaymentInfoEvent(Mockito.eq(getPaymentInfo()));
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
         }
     }
 
-    protected InboundTransaction getInboundTransaction() {
-        return InboundTransaction.builder()
-                .idTrxAcquirer("1")
-                .acquirerCode("001")
-                .trxDate("2020-04-09T16:22:45.304Z")
-                .amount(1050L)
-                .operationType("00")
-                .pan("hpan")
-                .merchantId("0")
-                .circuitType("00")
-                .mcc("813")
-                .idTrxIssuer("0")
-                .amountCurrency("833")
-                .correlationId("1")
-                .acquirerId("0")
-                .terminalId("0")
-                .bin("0000")
+
+    public InboundPaymentInfo getInboundTransaction() {
+        return InboundPaymentInfo.builder()
+                .uniqueID("000000001")
+                .result("KO")
+                .resultReason("resultReason")
+                .cro("17270006101")
+                .executionDate("27/07/2021")
                 .filename("filename")
                 .lineNumber(1)
                 .build();
     }
 
-    protected PaymentInfo getTransaction() {
+    protected PaymentInfo getPaymentInfo() {
         return PaymentInfo.builder()
-                .idTrxAcquirer("1")
-                .acquirerCode("001")
-                .trxDate("2020-04-09T16:22:45.304Z")
-                .amount(BigDecimal.valueOf(10.50).setScale(2))
-                .operationType("00")
-                .hpan("hpan")
-                .merchantId("0")
-                .circuitType("00")
-                .mcc("813")
-                .idTrxIssuer("0")
-                .amountCurrency("833")
-                .correlationId("1")
-                .acquirerId("0")
-                .terminalId("0")
-                .bin("0000")
+                .uniqueID("000000001")
+                .result("KO")
+                .resultReason("resultReason")
+                .cro("17270006101")
+                .executionDate("27/07/2021")
                 .build();
     }
 

@@ -1,6 +1,6 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.listener;
 
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -30,14 +30,14 @@ public class PaymentInfoItemProcessListenerTest {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String executionDate = OffsetDateTime.now().format(fmt);
 
-        TransactionItemProcessListener TransactionItemProcessListener = new TransactionItemProcessListener();
-        TransactionItemProcessListener.setExecutionDate(executionDate);
-        TransactionItemProcessListener.setEnableOnErrorLogging(true);
-        TransactionItemProcessListener.setEnableOnErrorFileLogging(true);
-        TransactionItemProcessListener.setResolver(new PathMatchingResourcePatternResolver());
-        TransactionItemProcessListener.setErrorTransactionsLogsPath("file:/"+folder.getAbsolutePath());
-        TransactionItemProcessListener.onProcessError(
-                InboundTransaction.builder().filename("test").lineNumber(1).build(),
+        PaymentInfoItemProcessListener PaymentInfoItemProcessListener = new PaymentInfoItemProcessListener();
+        PaymentInfoItemProcessListener.setExecutionDate(executionDate);
+        PaymentInfoItemProcessListener.setEnableOnErrorLogging(true);
+        PaymentInfoItemProcessListener.setEnableOnErrorFileLogging(true);
+        PaymentInfoItemProcessListener.setResolver(new PathMatchingResourcePatternResolver());
+        PaymentInfoItemProcessListener.setErrorPaymentInfosLogsPath("file:/"+folder.getAbsolutePath());
+        PaymentInfoItemProcessListener.onProcessError(
+                InboundPaymentInfo.builder().filename("test").lineNumber(1).build(),
                 new Exception());
 
         Assert.assertEquals(1,

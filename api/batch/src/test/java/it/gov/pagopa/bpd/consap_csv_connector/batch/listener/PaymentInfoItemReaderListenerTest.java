@@ -1,6 +1,6 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.listener;
 
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -31,13 +31,13 @@ public class PaymentInfoItemReaderListenerTest {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String executionDate = OffsetDateTime.now().format(fmt);
 
-        TransactionItemReaderListener transactionItemReaderListener = new TransactionItemReaderListener();
-        transactionItemReaderListener.setExecutionDate(executionDate);
-        transactionItemReaderListener.setEnableOnErrorLogging(true);
-        transactionItemReaderListener.setEnableOnErrorFileLogging(true);
-        transactionItemReaderListener.setResolver(new PathMatchingResourcePatternResolver());
-        transactionItemReaderListener.setErrorTransactionsLogsPath("file:/"+folder.getAbsolutePath());
-        transactionItemReaderListener.afterRead(InboundTransaction
+        PaymentInfoItemReaderListener paymentInfoItemReaderListener = new PaymentInfoItemReaderListener();
+        paymentInfoItemReaderListener.setExecutionDate(executionDate);
+        paymentInfoItemReaderListener.setEnableOnErrorLogging(true);
+        paymentInfoItemReaderListener.setEnableOnErrorFileLogging(true);
+        paymentInfoItemReaderListener.setResolver(new PathMatchingResourcePatternResolver());
+        paymentInfoItemReaderListener.setErrorPaymentInfosLogsPath("file:/"+folder.getAbsolutePath());
+        paymentInfoItemReaderListener.afterRead(InboundPaymentInfo
                 .builder().filename("test").lineNumber(1).build());
 
         Assert.assertEquals(0,
@@ -57,13 +57,13 @@ public class PaymentInfoItemReaderListenerTest {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String executionDate = OffsetDateTime.now().format(fmt);
 
-        TransactionItemReaderListener transactionItemReaderListener = new TransactionItemReaderListener();
-        transactionItemReaderListener.setExecutionDate(executionDate);
-        transactionItemReaderListener.setEnableOnErrorLogging(true);
-        transactionItemReaderListener.setEnableOnErrorFileLogging(true);
-        transactionItemReaderListener.setResolver(new PathMatchingResourcePatternResolver());
-        transactionItemReaderListener.setErrorTransactionsLogsPath("file:/"+folder.getAbsolutePath());
-        transactionItemReaderListener.onReadError(new FlatFileParseException(
+        PaymentInfoItemReaderListener paymentInfoItemReaderListener = new PaymentInfoItemReaderListener();
+        paymentInfoItemReaderListener.setExecutionDate(executionDate);
+        paymentInfoItemReaderListener.setEnableOnErrorLogging(true);
+        paymentInfoItemReaderListener.setEnableOnErrorFileLogging(true);
+        paymentInfoItemReaderListener.setResolver(new PathMatchingResourcePatternResolver());
+        paymentInfoItemReaderListener.setErrorPaymentInfosLogsPath("file:/"+folder.getAbsolutePath());
+        paymentInfoItemReaderListener.onReadError(new FlatFileParseException(
                 "Parsing error at line: 1 in resource=[[file:/input]]", new Exception(), "input", 1));
 
         Assert.assertEquals(1,

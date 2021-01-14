@@ -5,9 +5,8 @@ import eu.sia.meda.core.properties.PropertiesManager;
 import eu.sia.meda.event.configuration.ArchEventConfigurationService;
 import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.config.CsvPaymentInstrumentRemovalTestConfig;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvPaymentInfoPublisherConnector;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.PGPDecryptUtil;
+import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvPaymentInfoPublisherConnector;
 import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
@@ -52,7 +51,7 @@ import java.util.Date;
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
 /**
- * Class for testing the CsvTransactionReaderBatch class
+ * Class for testing the CsvPaymentInfoReaderBatch class
  */
 @RunWith(SpringRunner.class)
 @SpringBatchTest
@@ -68,7 +67,6 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
         "classpath:org/springframework/batch/core/schema-hsqldb.sql"})
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {
-        CsvPaymentInstrumentRemovalTestConfig.class,
         JacksonAutoConfiguration.class,
         AuthenticationConfiguration.class,
         KafkaAutoConfiguration.class,
@@ -79,28 +77,28 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
         SimpleEventResponseTransformer.class,
         FeignAutoConfiguration.class,
         HttpMessageConvertersAutoConfiguration.class,
-        CsvTransactionReaderBatch.class
+        CsvPaymentInfoReaderBatch.class
 })
 @TestPropertySource(
         locations = {
-                "classpath:config/testCsvTransactionPublisher.properties",
+                "classpath:config/testCsvPaymentInfoPublisher.properties",
         },
         properties = {
                 "spring.main.allow-bean-definition-overriding=true",
-                "batchConfiguration.CsvTransactionReaderBatch.applyHashing=true",
-                "batchConfiguration.CsvTransactionReaderBatch.applyDecrypt=true",
-                "batchConfiguration.CsvTransactionReaderBatch.secretKeyPath=classpath:/test-encrypt/secretKey.asc",
-                "batchConfiguration.CsvTransactionReaderBatch.passphrase=test",
-                "batchConfiguration.CsvTransactionReaderBatch.skipLimit=3",
-                "batchConfiguration.CsvTransactionReaderBatch.partitionerMaxPoolSize=1",
-                "batchConfiguration.CsvTransactionReaderBatch.partitionerCorePoolSize=1",
-                "batchConfiguration.CsvTransactionReaderBatch.readerMaxPoolSize=1",
-                "batchConfiguration.CsvTransactionReaderBatch.readerCorePoolSize=1",
-                "batchConfiguration.CsvTransactionReaderBatch.classpath=classpath:/test-encrypt/**/*.pgp",
-                "batchConfiguration.CsvTransactionReaderBatch.successArchivePath=classpath:/test-encrypt/**/success",
-                "batchConfiguration.CsvTransactionReaderBatch.errorArchivePath=classpath:/test-encrypt/**/error",
-                "batchConfiguration.CsvTransactionReaderBatch.timestampPattern=MM/dd/yyyy HH:mm:ss",
-                "batchConfiguration.CsvTransactionReaderBatch.linesToSkip=0",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.applyHashing=true",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.applyDecrypt=true",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.secretKeyPath=classpath:/test-encrypt/secretKey.asc",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.passphrase=test",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.skipLimit=3",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.partitionerMaxPoolSize=1",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.partitionerCorePoolSize=1",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.readerMaxPoolSize=1",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.readerCorePoolSize=1",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.classpath=classpath:/test-encrypt/**/*.pgp",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.successArchivePath=classpath:/test-encrypt/**/success",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.errorArchivePath=classpath:/test-encrypt/**/error",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.timestampPattern=MM/dd/yyyy HH:mm:ss",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.linesToSkip=0",
                 "connectors.eventConfigurations.items.CsvPaymentInfoPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}"
         })
 public class CsvPaymentInfoReaderBatchTest {

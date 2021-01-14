@@ -70,8 +70,8 @@ public class CsvTransactionBalancerBatch {
 
     /**
      * ScheduTransactionItemProcessListener
-     * TransactionItemReaderListener
-     * TransactionItemWriterListener
+     * PaymentInfoItemReaderListener
+     * PaymentInfoItemWriterListener
      * TransactionReaderStepListenered method used to launch the configured batch job for processing transaction from a defined directory.
      * The scheduler is based on a cron execution, based on the provided configuration
      * @throws  Exception

@@ -1,6 +1,6 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.listener;
 
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -31,14 +31,14 @@ public class PaymentInfoItemWriterListenerTest {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String executionDate = OffsetDateTime.now().format(fmt);
 
-        TransactionItemWriterListener transactionItemWriterListener = new TransactionItemWriterListener();
-        transactionItemWriterListener.setExecutionDate(executionDate);
-        transactionItemWriterListener.setEnableOnErrorFileLogging(true);
-        transactionItemWriterListener.setEnableOnErrorLogging(true);
-        transactionItemWriterListener.setResolver(new PathMatchingResourcePatternResolver());
-        transactionItemWriterListener.setErrorTransactionsLogsPath("file:/"+folder.getAbsolutePath());
-        transactionItemWriterListener.onWriteError(new Exception(), Collections.singletonList(
-                InboundTransaction.builder().filename("test").lineNumber(1).build()));
+        PaymentInfoItemWriterListener paymentInfoItemWriterListener = new PaymentInfoItemWriterListener();
+        paymentInfoItemWriterListener.setExecutionDate(executionDate);
+        paymentInfoItemWriterListener.setEnableOnErrorFileLogging(true);
+        paymentInfoItemWriterListener.setEnableOnErrorLogging(true);
+        paymentInfoItemWriterListener.setResolver(new PathMatchingResourcePatternResolver());
+        paymentInfoItemWriterListener.setErrorPaymentInfosLogsPath("file:/"+folder.getAbsolutePath());
+        paymentInfoItemWriterListener.onWriteError(new Exception(), Collections.singletonList(
+                InboundPaymentInfo.builder().filename("test").lineNumber(1).build()));
 
         Assert.assertEquals(1,
                 FileUtils.listFiles(

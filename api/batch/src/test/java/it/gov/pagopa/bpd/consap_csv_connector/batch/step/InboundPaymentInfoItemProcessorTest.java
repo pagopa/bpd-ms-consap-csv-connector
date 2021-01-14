@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.step;
 
 import eu.sia.meda.BaseTest;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundTransaction;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,29 +11,29 @@ import org.junit.rules.ExpectedException;
 import javax.validation.ConstraintViolationException;
 
 /**
- * Class for unit testing of the InboundTransactionItemProcessor class
+ * Class for unit testing of the InboundPaymentInfoItemProcessor class
  */
 public class InboundPaymentInfoItemProcessorTest extends BaseTest {
 
-    private InboundTransactionItemProcessor inboundTransactionItemProcessor;
+    private InboundPaymentInfoItemProcessor inboundPaymentInfoItemProcessor;
 
     @Before
     public void initTest() {
-        this.inboundTransactionItemProcessor = new InboundTransactionItemProcessor();
+        this.inboundPaymentInfoItemProcessor = new InboundPaymentInfoItemProcessor();
     }
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void processValidInboundTransaction() {
+    public void processValidInboundPaymentInfo() {
 
         try {
-            InboundTransaction inboundTransaction = getInboundTransaction();
-            InboundTransaction transaction = inboundTransactionItemProcessor.
-                    process(inboundTransaction);
-            Assert.assertNotNull(transaction);
-            Assert.assertEquals(transaction.getPan(), inboundTransaction.getPan());
+            InboundPaymentInfo inboundPaymentInfo = getInboundTransaction();
+            InboundPaymentInfo paymentInfo = inboundPaymentInfoItemProcessor.
+                    process(inboundPaymentInfo);
+            Assert.assertNotNull(paymentInfo);
+            Assert.assertEquals(paymentInfo.getUniqueID(), inboundPaymentInfo.getUniqueID());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -45,34 +45,24 @@ public class InboundPaymentInfoItemProcessorTest extends BaseTest {
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
-    public void processInvalidInboundTransaction() {
+    public void processInvalidInboundPaymentInfo() {
 
-        InboundTransaction inboundTransaction = getInboundTransaction();
-        inboundTransaction.setCircuitType("000");
-        inboundTransaction.setAcquirerCode(null);
+        InboundPaymentInfo inboundPaymentInfo = getInboundTransaction();
+        inboundPaymentInfo.setUniqueID(null);
+        inboundPaymentInfo.setCro("");
 
         exceptionRule.expect(ConstraintViolationException.class);
-        inboundTransactionItemProcessor.process(inboundTransaction);
+        inboundPaymentInfoItemProcessor.process(inboundPaymentInfo);
 
     }
 
-    protected InboundTransaction getInboundTransaction() {
-        return InboundTransaction.builder()
-                .idTrxAcquirer("1")
-                .acquirerCode("001")
-                .trxDate("2020-04-09T16:22:45.304Z")
-                .amount(1050L)
-                .operationType("00")
-                .pan("hpan")
-                .merchantId("0")
-                .circuitType("00")
-                .mcc("813")
-                .idTrxIssuer("0")
-                .amountCurrency("833")
-                .correlationId("1")
-                .acquirerId("0")
-                .terminalId("0")
-                .bin("000000")
+    public InboundPaymentInfo getInboundTransaction() {
+        return InboundPaymentInfo.builder()
+                .uniqueID("000000001")
+                .result("KO")
+                .resultReason("resultReason")
+                .cro("17270006101")
+                .executionDate("27/07/2021")
                 .build();
     }
 

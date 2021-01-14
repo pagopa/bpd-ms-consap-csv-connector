@@ -16,8 +16,6 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.test.MetaDataInstanceFactory;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.File;
@@ -59,12 +57,12 @@ public class PaymentInfoReaderStepListenerTest extends BaseTest {
                         resolver.getResources("classpath:/test-encrypt/**/success")[0].getFile(),
                         new String[]{"pgp"},false).size());
 
-        TransactionReaderStepListener transactionReaderStepListener = new TransactionReaderStepListener();
-        transactionReaderStepListener.setErrorPath("classpath:/test-encrypt/**/error");
-        transactionReaderStepListener.setSuccessPath("classpath:/test-encrypt/**/success");
-        transactionReaderStepListener.setWriterTrackerService(writerTrackerService);
-        transactionReaderStepListener.setApplyEncrypt(false);
-        ExitStatus status = transactionReaderStepListener.afterStep(stepExecution);
+        PaymentInfoReaderStepListener paymentInfoReaderStepListener = new PaymentInfoReaderStepListener();
+        paymentInfoReaderStepListener.setErrorPath("classpath:/test-encrypt/**/error");
+        paymentInfoReaderStepListener.setSuccessPath("classpath:/test-encrypt/**/success");
+        paymentInfoReaderStepListener.setWriterTrackerService(writerTrackerService);
+        paymentInfoReaderStepListener.setApplyEncrypt(false);
+        ExitStatus status = paymentInfoReaderStepListener.afterStep(stepExecution);
         Assert.assertEquals(new ExitStatus("COMPLETED WITH SKIPS"), status);
 
         Assert.assertEquals(1,
