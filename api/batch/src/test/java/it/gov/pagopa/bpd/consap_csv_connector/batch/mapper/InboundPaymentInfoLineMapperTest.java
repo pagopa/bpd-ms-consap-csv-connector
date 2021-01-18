@@ -38,7 +38,7 @@ public class InboundPaymentInfoLineMapperTest {
         delimitedLineTokenizer.setNames(
                 "uniqueID", "result", "resultReason", "cro", "executionDate");
         lineAwareMapper.setTokenizer(delimitedLineTokenizer);
-        lineAwareMapper.setFieldSetMapper(new InboundPaymentInfoFieldSetMapper("MM/dd/yyyy HH:mm:ss"));
+        lineAwareMapper.setFieldSetMapper(new InboundPaymentInfoFieldSetMapper("dd/MM/yyyy"));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class InboundPaymentInfoLineMapperTest {
 
         expectedException.expect(FlatFileParseException.class);
         lineAwareMapper.mapLine(
-                ";KO;resultReason;17270006101;27/07/2021",
+                "KO;resultReason;17270006101;27/07/2021",
                 1);
 
     }

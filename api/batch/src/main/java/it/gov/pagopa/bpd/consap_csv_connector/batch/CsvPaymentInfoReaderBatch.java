@@ -309,18 +309,18 @@ public class CsvPaymentInfoReaderBatch {
         return paymentInfoWriter;
     }
 
-//    /**
-//     *
-//     * @return step instance based on the tasklet to be used for file archival at the end of the reading process
-//     */
-//    @Bean
-//    public Step terminationTask() {
-//        if (writerTrackerService == null) {
-//            createWriterTrackerService();
-//        }
-//        TerminationTasklet terminationTasklet = new TerminationTasklet(writerTrackerService);
-//        return stepBuilderFactory.get("csv-success-termination-step").tasklet(terminationTasklet).build();
-//    }
+    /**
+     *
+     * @return step instance based on the tasklet to be used for file archival at the end of the reading process
+     */
+    @Bean
+    public Step terminationTask() {
+        if (writerTrackerService == null) {
+            createWriterTrackerService();
+        }
+        TerminationTasklet terminationTasklet = new TerminationTasklet(writerTrackerService);
+        return stepBuilderFactory.get("csv-success-termination-step").tasklet(terminationTasklet).build();
+    }
 
 
     /**
@@ -332,10 +332,10 @@ public class CsvPaymentInfoReaderBatch {
         ArchivalTasklet archivalTasklet = new ArchivalTasklet();
         archivalTasklet.setSuccessPath(successArchivePath);
         archivalTasklet.setErrorPath(errorArchivePath);
-        archivalTasklet.setApplyEncrypt(true);
+        archivalTasklet.setApplyEncrypt(false);
         archivalTasklet.setErrorDir(errorLogsPath);
         archivalTasklet.setPublicKeyDir(publicKey);
-        archivalTasklet.setApplyArchive(true);
+        archivalTasklet.setApplyArchive(false);
         return stepBuilderFactory.get("csv-success-archive-step").tasklet(archivalTasklet).build();
     }
 

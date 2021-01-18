@@ -4,9 +4,11 @@ import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.BindException;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -23,9 +25,7 @@ public class InboundPaymentInfoFieldSetMapper implements FieldSetMapper<InboundP
     private final String timestampParser;
 
     /**
-     *
-     * @param fieldSet
-     *          instance of FieldSet containing fields related to an {@link InboundPaymentInfo}
+     * @param fieldSet instance of FieldSet containing fields related to an {@link InboundPaymentInfo}
      * @return instance of  {@link InboundPaymentInfo}, mapped from a FieldSet
      * @throws BindException
      */
@@ -36,8 +36,10 @@ public class InboundPaymentInfoFieldSetMapper implements FieldSetMapper<InboundP
             return null;
         }
 
-//        DateTimeFormatter dtf = timestampParser != null && !timestampParser.isEmpty() ?
-//                DateTimeFormatter.ofPattern(timestampParser).withZone(ZoneId.systemDefault()): null;
+        String executionDateString = fieldSet.readString("executionDate");
+
+        DateTimeFormatter dtf = timestampParser != null && !timestampParser.isEmpty() ?
+                DateTimeFormatter.ofPattern(timestampParser).withZone(ZoneId.systemDefault()) : null;
 
         InboundPaymentInfo inboundPaymentInfo =
                 InboundPaymentInfo.builder()
@@ -45,16 +47,19 @@ public class InboundPaymentInfoFieldSetMapper implements FieldSetMapper<InboundP
                         .result(fieldSet.readString("result"))
                         .resultReason(fieldSet.readString("resultReason"))
                         .cro(fieldSet.readString("cro"))
-                        .executionDate(fieldSet.readString("executionDate"))
                         .build();
 
-//        OffsetDateTime dateTime = dtf != null ?
-//                ZonedDateTime.parse(fieldSet.readString("timestamp"), dtf).toOffsetDateTime() :
-//                OffsetDateTime.parse(fieldSet.readString("timestamp"));
-//
-//        if (dateTime != null) {
-//            inboundPaymentInfo.setTrxDate(fieldSet.readString("timestamp"));
-//        }
+        if (executionDateString != null
+                && !executionDateString.isEmpty()) {
+
+            LocalDate dateTime = dtf != null ?
+                    LocalDate.parse(executionDateString, dtf) :
+                    LocalDate.parse(executionDateString);
+
+            if (dateTime != null) {
+                inboundPaymentInfo.setExecutionDate(executionDateString);
+            }
+        }
 
         return inboundPaymentInfo;
 

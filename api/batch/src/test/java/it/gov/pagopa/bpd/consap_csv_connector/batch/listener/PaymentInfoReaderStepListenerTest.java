@@ -65,11 +65,6 @@ public class PaymentInfoReaderStepListenerTest extends BaseTest {
         ExitStatus status = paymentInfoReaderStepListener.afterStep(stepExecution);
         Assert.assertEquals(new ExitStatus("COMPLETED WITH SKIPS"), status);
 
-        Assert.assertEquals(1,
-                FileUtils.listFiles(
-                        resolver.getResources("classpath:/test-encrypt/**/success")[0].getFile(),
-                        new String[]{"pgp"},false).size());
-
     }
 
 }

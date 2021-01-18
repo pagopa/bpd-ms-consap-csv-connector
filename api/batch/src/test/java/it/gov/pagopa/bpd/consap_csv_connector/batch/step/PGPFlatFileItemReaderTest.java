@@ -79,12 +79,12 @@ public class PGPFlatFileItemReaderTest extends BaseTest {
         textTrxPgpFOS.close();
 
         flatFileItemReader.setResource(new UrlResource(tempFolder.getRoot().toURI() + "test-trx.pgp"));
-        flatFileItemReader.setLineMapper(paymentInfoLineMapper("MM/dd/yyyy HH:mm:ss"));
+        flatFileItemReader.setLineMapper(paymentInfoLineMapper("dd/MM/yyyy"));
         ExecutionContext executionContext = MetaDataInstanceFactory.createStepExecution().getExecutionContext();
         flatFileItemReader.update(executionContext);
         flatFileItemReader.open(executionContext);
         Assert.assertNotNull(flatFileItemReader.read());
-        exceptionRule.expect(FlatFileParseException.class);
+
         flatFileItemReader.read();
         Assert.assertNotNull(flatFileItemReader.read());
         flatFileItemReader.update(executionContext);
@@ -104,12 +104,11 @@ public class PGPFlatFileItemReaderTest extends BaseTest {
         flatFileItemReader.setResource(new UrlResource("file:"+
                 this.getClass().getResource("/test-encrypt")
                 .getFile() + "/test-trx.csv"));
-        flatFileItemReader.setLineMapper(paymentInfoLineMapper("MM/dd/yyyy HH:mm:ss"));
+        flatFileItemReader.setLineMapper(paymentInfoLineMapper("dd/MM/yyyy"));
         ExecutionContext executionContext = MetaDataInstanceFactory.createStepExecution().getExecutionContext();
         flatFileItemReader.update(executionContext);
         flatFileItemReader.open(executionContext);
         Assert.assertNotNull(flatFileItemReader.read());
-        exceptionRule.expect(FlatFileParseException.class);
         flatFileItemReader.read();
         Assert.assertNotNull(flatFileItemReader.read());
         flatFileItemReader.update(executionContext);
@@ -137,7 +136,7 @@ public class PGPFlatFileItemReaderTest extends BaseTest {
                 "file:/"+this.getClass().getResource("/test-encrypt").getFile() +
                         "/secretKey.asc", "test", true);
         flatFileItemReader.setResource(new UrlResource(tempFolder.getRoot().toURI() + "test-trx.pgp"));
-        flatFileItemReader.setLineMapper(paymentInfoLineMapper("MM/dd/yyyy HH:mm:ss"));
+        flatFileItemReader.setLineMapper(paymentInfoLineMapper("dd/MM/yyyy"));
         ExecutionContext executionContext = MetaDataInstanceFactory.createStepExecution().getExecutionContext();
         flatFileItemReader.update(executionContext);
         exceptionRule.expect(ItemStreamException.class);

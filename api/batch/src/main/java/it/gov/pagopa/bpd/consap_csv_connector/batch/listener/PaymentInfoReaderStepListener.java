@@ -48,6 +48,80 @@ public class PaymentInfoReaderStepListener implements StepExecutionListener {
     @SneakyThrows
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
+        String file = String.valueOf(stepExecution.getExecutionContext().get("fileName"));
+
+        List<CountDownLatch> countDownLatchList = writerTrackerService.getFileCountDownLatches(file);
+
+        if (countDownLatchList != null) {
+            for (CountDownLatch countDownLatch : countDownLatchList) {
+                countDownLatch.await();
+            }
+        }
+
+        String path = null;
+
+        try {
+            path = resolver.getResource(file).getFile().getAbsolutePath();
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+            path = file.replace("file:/", "");
+        }
+
+        try {
+
+            String archivalPath =
+                    BatchStatus.COMPLETED.equals(stepExecution.getStatus()) &&
+                            stepExecution.getFailureExceptions().size() <= 0 ?
+                            successPath : errorPath;
+
+            file = file.replaceAll("\\\\", "/");
+            String[] filename = file.split("/");
+
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+
+            archivalPath = resolver.getResources(archivalPath)[0].getFile().getAbsolutePath();
+
+            File destFile = FileUtils.getFile(archivalPath + "/" + RandomUtils.nextLong() +
+                    "_" + OffsetDateTime.now().format(fmt) + "_" + filename[filename.length - 1]);
+
+            FileUtils.moveFile(FileUtils.getFile(path), destFile);
+
+            if (applyEncrypt) {
+                PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+                Resource[] resources = resolver.getResources(errorDir.concat("/*.csv"));
+                Resource publicKey = resolver.getResource(publicKeyDir);
+                for (Resource resource : resources) {
+                    FileInputStream publicKeyIS = null;
+                    FileOutputStream outputFOS = null;
+                    try {
+                        if (resource.getFilename().contains(filename[filename.length - 1]
+                                .replaceAll(".csv", "")
+                                .replaceAll(".pgp", ""))) {
+                            publicKeyIS = new FileInputStream(publicKey.getFile());
+                            outputFOS = new FileOutputStream(resource.getFile()
+                                    .getAbsolutePath().concat(".pgp"));
+                            PGPDecryptUtil.encryptFile(outputFOS,
+                                    resource.getFile().getAbsolutePath(),
+                                    PGPDecryptUtil.readPublicKey(publicKeyIS),
+                                    false, true);
+                        }
+                    } finally {
+                        if (publicKeyIS != null) {
+                            publicKeyIS.close();
+                        }
+                        if (outputFOS != null) {
+                            outputFOS.close();
+                        }
+                        FileUtils.forceDelete(resource.getFile());
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
+
 
         ExitStatus exitStatus = stepExecution.getExitStatus();
 

@@ -5,6 +5,7 @@ import eu.sia.meda.core.properties.PropertiesManager;
 import eu.sia.meda.event.configuration.ArchEventConfigurationService;
 import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.config.CsvPaymentInfoReaderTestConfig;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.PGPDecryptUtil;
 import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvPaymentInfoPublisherConnector;
 import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
@@ -46,7 +47,9 @@ import javax.management.ObjectName;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.management.ManagementFactory;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
@@ -67,6 +70,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
         "classpath:org/springframework/batch/core/schema-hsqldb.sql"})
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {
+        CsvPaymentInfoReaderTestConfig.class,
         JacksonAutoConfiguration.class,
         AuthenticationConfiguration.class,
         KafkaAutoConfiguration.class,
@@ -97,7 +101,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
                 "batchConfiguration.CsvPaymentInfoReaderBatch.classpath=classpath:/test-encrypt/**/*.pgp",
                 "batchConfiguration.CsvPaymentInfoReaderBatch.successArchivePath=classpath:/test-encrypt/**/success",
                 "batchConfiguration.CsvPaymentInfoReaderBatch.errorArchivePath=classpath:/test-encrypt/**/error",
-                "batchConfiguration.CsvPaymentInfoReaderBatch.timestampPattern=MM/dd/yyyy HH:mm:ss",
+                "batchConfiguration.CsvPaymentInfoReaderBatch.timestampPattern=dd/MM/yyyy",
                 "batchConfiguration.CsvPaymentInfoReaderBatch.linesToSkip=0",
                 "connectors.eventConfigurations.items.CsvPaymentInfoPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}"
         })
@@ -171,6 +175,14 @@ public class CsvPaymentInfoReaderBatchTest {
             Assert.assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
+            Collection<File> fileSuccList = FileUtils.listFiles(
+                    resolver.getResources("classpath:/test-encrypt/**/success")[0].getFile(),
+                    new String[]{"pgp"},false);
+            Collection<File> fileErrList = FileUtils.listFiles(
+                    resolver.getResources("classpath:/test-encrypt/**/error")[0].getFile(),
+                    new String[]{"pgp"},false);
+
             Assert.assertEquals(0,
                     FileUtils.listFiles(
                             resolver.getResources("classpath:/test-encrypt/**/success")[0].getFile(),
@@ -244,6 +256,12 @@ public class CsvPaymentInfoReaderBatchTest {
             Assert.assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+            Collection<File> fileSuccList = FileUtils.listFiles(
+                    resolver.getResources("classpath:/test-encrypt/**/success")[0].getFile(),
+                    new String[]{"pgp"},false);
+            Collection<File> fileErrList = FileUtils.listFiles(
+                    resolver.getResources("classpath:/test-encrypt/**/error")[0].getFile(),
+                    new String[]{"pgp"},false);
             Assert.assertEquals(0,
                     FileUtils.listFiles(
                             resolver.getResources("classpath:/test-encrypt/**/success")[0].getFile(),
