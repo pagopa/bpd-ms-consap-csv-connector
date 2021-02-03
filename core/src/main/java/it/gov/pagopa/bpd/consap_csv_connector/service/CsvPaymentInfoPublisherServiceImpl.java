@@ -2,8 +2,8 @@ package it.gov.pagopa.bpd.consap_csv_connector.service;
 
 import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvPaymentInfoPublisherConnector;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
+import it.gov.pagopa.bpd.award_winner.integration.event.CsvPaymentInfoPublisherConnector;
+import it.gov.pagopa.bpd.award_winner.integration.event.model.PaymentInfo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

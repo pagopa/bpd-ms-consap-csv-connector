@@ -2,10 +2,10 @@ package it.gov.pagopa.bpd.consap_csv_connector.batch.step;
 
 import eu.sia.meda.core.interceptors.BaseContextHolder;
 import eu.sia.meda.core.model.ApplicationContext;
+import it.gov.pagopa.bpd.award_winner.integration.event.model.PaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemWriterListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.PaymentInfoMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
 import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
 import lombok.Data;

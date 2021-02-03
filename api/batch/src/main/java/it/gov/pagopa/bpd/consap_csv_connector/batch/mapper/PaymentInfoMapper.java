@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.mapper;
 
+import it.gov.pagopa.bpd.award_winner.integration.event.model.PaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 

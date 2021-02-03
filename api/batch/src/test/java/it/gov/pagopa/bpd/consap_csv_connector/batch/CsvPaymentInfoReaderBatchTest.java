@@ -5,9 +5,9 @@ import eu.sia.meda.core.properties.PropertiesManager;
 import eu.sia.meda.event.configuration.ArchEventConfigurationService;
 import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
+import it.gov.pagopa.bpd.award_winner.integration.event.CsvPaymentInfoPublisherConnector;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.config.CsvPaymentInfoReaderTestConfig;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.PGPDecryptUtil;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvPaymentInfoPublisherConnector;
 import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
@@ -49,7 +49,6 @@ import java.io.FileOutputStream;
 import java.lang.management.ManagementFactory;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 

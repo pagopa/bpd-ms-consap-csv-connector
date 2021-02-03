@@ -1,8 +1,8 @@
-package it.gov.pagopa.bpd.consap_csv_connector.integration.event;
+package it.gov.pagopa.bpd.award_winner.integration.event;
 
 import eu.sia.meda.event.BaseEventConnectorTest;
 import eu.sia.meda.util.TestUtils;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
+import it.gov.pagopa.bpd.award_winner.integration.event.model.PaymentInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;

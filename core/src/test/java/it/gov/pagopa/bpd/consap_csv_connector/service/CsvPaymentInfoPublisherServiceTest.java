@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.BaseSpringTest;
 import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvPaymentInfoPublisherConnector;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
+import it.gov.pagopa.bpd.award_winner.integration.event.CsvPaymentInfoPublisherConnector;
+import it.gov.pagopa.bpd.award_winner.integration.event.model.PaymentInfo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.math.BigDecimal;
 
 /**
  * Class for unit testing of {@link CsvPaymentInfoPublisherService}

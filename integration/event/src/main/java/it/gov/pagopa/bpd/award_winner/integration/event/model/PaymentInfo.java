@@ -1,8 +1,6 @@
-package it.gov.pagopa.bpd.consap_csv_connector.integration.event.model;
+package it.gov.pagopa.bpd.award_winner.integration.event.model;
 
 import lombok.*;
-
-import java.math.BigDecimal;
 
 /**
  * Model for transaction to be sent in the outbound channel

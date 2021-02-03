@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.step;
 
+import it.gov.pagopa.bpd.award_winner.integration.event.model.PaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.model.PaymentInfo;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

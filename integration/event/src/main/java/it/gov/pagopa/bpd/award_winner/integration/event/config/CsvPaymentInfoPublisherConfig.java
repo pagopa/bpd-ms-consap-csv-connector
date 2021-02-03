@@ -1,6 +1,6 @@
-package it.gov.pagopa.bpd.consap_csv_connector.integration.event.config;
+package it.gov.pagopa.bpd.award_winner.integration.event.config;
 
-import it.gov.pagopa.bpd.consap_csv_connector.integration.event.CsvPaymentInfoPublisherConnector;
+import it.gov.pagopa.bpd.award_winner.integration.event.CsvPaymentInfoPublisherConnector;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
