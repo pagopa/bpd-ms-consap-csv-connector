@@ -10,7 +10,7 @@
 
     <groupId>it.gov.pagopa.bpd.ms</groupId>
     <artifactId>bpd-ms-consap-csv-connector</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-rc1</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -22,12 +22,12 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector.integration</groupId>
                 <artifactId>bpd-ms-consap-csv-connector-integration-event</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.0-rc1</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector.integration</groupId>
                 <artifactId>bpd-ms-consap-csv-connector-integration-jpa</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.0-rc1</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector.integration</groupId>
@@ -37,12 +37,12 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector</groupId>
                 <artifactId>bpd-ms-consap-csv-connector-core</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.0-rc1</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector.api</groupId>
                 <artifactId>bpd-ms-consap-csv-connector-api-batch</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.0-rc1</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.api</groupId>

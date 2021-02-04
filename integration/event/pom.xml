@@ -4,12 +4,12 @@
     <parent>
         <artifactId>bpd-ms-consap-csv-connector-integration</artifactId>
         <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector</groupId>
-        <version>1.0.0</version>
+        <version>1.0.0-rc1</version>
     </parent>
 
     <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector.integration</groupId>
     <artifactId>bpd-ms-consap-csv-connector-integration-event</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-rc1</version>
 
     <dependencies>
         <dependency>
