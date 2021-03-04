@@ -3,6 +3,7 @@ package it.gov.pagopa.bpd.award_winner.integration.event.model;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 /**
  * Model for transaction to be sent in the outbound channel
