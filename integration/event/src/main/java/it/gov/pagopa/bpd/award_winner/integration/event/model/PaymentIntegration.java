@@ -2,6 +2,8 @@ package it.gov.pagopa.bpd.award_winner.integration.event.model;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 /**
  * Model for transaction to be sent in the outbound channel
  */
@@ -14,7 +16,7 @@ public class PaymentIntegration {
 
     String idConsap;
 
-    String idReclamo;
+    String idComplaint;
 
     String idPagoPa;
 
@@ -26,9 +28,9 @@ public class PaymentIntegration {
 
     String surname;
 
-    String cashbackAmount;
+    BigDecimal cashbackAmount;
 
-    String causale;
+    String resultReason;
 
     String periodStartDate;
 
@@ -36,7 +38,7 @@ public class PaymentIntegration {
 
     String awardPeriodId;
 
-    String esito;
+    String result;
 
     String cro;
 

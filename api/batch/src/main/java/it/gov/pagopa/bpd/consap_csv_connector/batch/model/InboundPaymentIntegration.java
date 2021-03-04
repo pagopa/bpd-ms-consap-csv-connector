@@ -13,38 +13,69 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"idConsap"}, callSuper = false)
 public class InboundPaymentIntegration {
 
+    @NotBlank
+    @NotNull
     String idConsap;
 
-    String idReclamo;
+    @NotBlank
+    @NotNull
+    String idComplaint;
 
     String idPagoPa;
 
+    @NotBlank
+    @NotNull
     String fiscalCode;
 
+    @NotBlank
+    @NotNull
     String iban;
 
+    @NotBlank
+    @NotNull
     String name;
 
+    @NotBlank
+    @NotNull
     String surname;
 
+    @NotBlank
+    @NotNull
     String cashbackAmount;
 
-    String causale;
+    @NotBlank
+    @NotNull
+    String resultReason;
 
+    @NotBlank
+    @NotBlank
     String periodStartDate;
 
+    @NotNull
+    @NotBlank
     String periodEndDate;
 
+    @NotNull
+    @NotBlank
     String awardPeriodId;
 
-    String esito;
+    @NotNull
+    @NotBlank
+    String result;
 
+    @NotNull
+    @NotBlank
     String cro;
 
+    @NotNull
+    @NotBlank
     String executionDate;
 
+    @NotNull
+    @NotBlank
     String technicalCountProperty;
 
     Integer lineNumber;

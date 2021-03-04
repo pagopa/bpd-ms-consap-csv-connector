@@ -31,7 +31,7 @@ import java.util.concurrent.Executor;
 public class PaymentIntegrationWriter implements ItemWriter<InboundPaymentIntegration> {
 
     private static final String BATCH_CONSAP_CSV_CONNECTOR_NAME = "bpd-ms-consap-csv-connector";
-    private static final String INTEGRATION_HEADER = "integration";
+    private static final String INTEGRATION_HEADER = "x-ms-integration";
 
     private final WriterTrackerService writerTrackerService;
     private final CsvPaymentIntegrationPublisherService csvPaymentIntegrationPublisherService;

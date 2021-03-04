@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 @Data
 public class PaymentIntegrationItemReaderListener implements ItemReadListener<InboundPaymentIntegration> {
 
-    private String errorPaymentInfosLogsPath;
+    private String errorPaymentIntegrationLogsPath;
     private String executionDate;
     private Boolean enableOnErrorLogging;
     private Boolean enableOnErrorFileLogging;
@@ -47,7 +47,7 @@ public class PaymentIntegrationItemReaderListener implements ItemReadListener<In
 
             try {
                 File file = new File(
-                        resolver.getResource(errorPaymentInfosLogsPath).getFile().getAbsolutePath()
+                        resolver.getResource(errorPaymentIntegrationLogsPath).getFile().getAbsolutePath()
                                 .concat("/".concat(executionDate))
                                 + "_ValidationErrorRecords_"+fileArr[fileArr.length-1]
                                 .replaceAll(".csv","")

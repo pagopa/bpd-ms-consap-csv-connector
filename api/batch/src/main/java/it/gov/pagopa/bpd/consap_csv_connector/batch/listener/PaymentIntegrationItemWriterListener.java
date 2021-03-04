@@ -21,7 +21,7 @@ import java.util.List;
 @Data
 public class PaymentIntegrationItemWriterListener implements ItemWriteListener<InboundPaymentIntegration> {
 
-    private String errorPaymentInfosLogsPath;
+    private String errorPaymentIntegrationLogsPath;
     private String executionDate;
     private Boolean enableOnErrorLogging;
     private Boolean enableOnErrorFileLogging;
@@ -48,7 +48,7 @@ public class PaymentIntegrationItemWriterListener implements ItemWriteListener<I
                     String filename = inboundPaymentInfo.getFilename().replaceAll("\\\\", "/");
                     String[] fileArr = filename.split("/");
                     File file = new File(
-                            resolver.getResource(errorPaymentInfosLogsPath).getFile().getAbsolutePath()
+                            resolver.getResource(errorPaymentIntegrationLogsPath).getFile().getAbsolutePath()
                                     .concat("/".concat(executionDate))
                                     + "_WriteErrorRecords_"+fileArr[fileArr.length-1]
                                     .replaceAll(".csv","")
@@ -79,7 +79,7 @@ public class PaymentIntegrationItemWriterListener implements ItemWriteListener<I
                 String filename = inboundPaymentInfo.getFilename().replaceAll("\\\\", "/");
                 String[] fileArr = filename.split("/");
                 File file = new File(
-                        resolver.getResource(errorPaymentInfosLogsPath).getFile().getAbsolutePath()
+                        resolver.getResource(errorPaymentIntegrationLogsPath).getFile().getAbsolutePath()
                                 .concat("/".concat(executionDate))
                                 + "_WriteErrorRecords_"+fileArr[fileArr.length-1]
                                 .replaceAll(".csv","")
@@ -96,11 +96,21 @@ public class PaymentIntegrationItemWriterListener implements ItemWriteListener<I
 
     private String buildCsv(InboundPaymentIntegration inboundPaymentInfo) {
         return (inboundPaymentInfo.getIdConsap() != null ? inboundPaymentInfo.getIdConsap() : "").concat(";")
+                .concat(inboundPaymentInfo.getIdComplaint() != null ? inboundPaymentInfo.getIdComplaint() : "").concat(";")
                 .concat(inboundPaymentInfo.getIdPagoPa() != null ? inboundPaymentInfo.getIdPagoPa() : "").concat(";")
-                .concat(inboundPaymentInfo.getIdReclamo() != null ? inboundPaymentInfo.getIdReclamo() : "").concat(";")
+                .concat(inboundPaymentInfo.getFiscalCode() != null ? inboundPaymentInfo.getFiscalCode() : "").concat(";")
+                .concat(inboundPaymentInfo.getIban() != null ? inboundPaymentInfo.getIban() : "").concat(";")
+                .concat(inboundPaymentInfo.getName() != null ? inboundPaymentInfo.getName() : "").concat(";")
+                .concat(inboundPaymentInfo.getSurname() != null ? inboundPaymentInfo.getSurname() : "").concat(";")
+                .concat(inboundPaymentInfo.getCashbackAmount() != null ? inboundPaymentInfo.getCashbackAmount() : "").concat(";")
+                .concat(inboundPaymentInfo.getResultReason() != null ? inboundPaymentInfo.getResultReason() : "").concat(";")
+                .concat(inboundPaymentInfo.getPeriodStartDate() != null ? inboundPaymentInfo.getPeriodStartDate() : "").concat(";")
+                .concat(inboundPaymentInfo.getPeriodEndDate() != null ? inboundPaymentInfo.getPeriodEndDate() : "").concat(";")
+                .concat(inboundPaymentInfo.getAwardPeriodId() != null ? inboundPaymentInfo.getAwardPeriodId() : "").concat(";")
+                .concat(inboundPaymentInfo.getResult() != null ? inboundPaymentInfo.getResult() : "").concat(";")
                 .concat(inboundPaymentInfo.getCro() != null ? inboundPaymentInfo.getCro() : "").concat(";")
-                .concat(inboundPaymentInfo.getExecutionDate() != null ? inboundPaymentInfo.getExecutionDate() : "").concat("\n");
+                .concat(inboundPaymentInfo.getExecutionDate() != null ? inboundPaymentInfo.getExecutionDate() : "").concat("\n")
+                .concat(inboundPaymentInfo.getTechnicalCountProperty() != null ? inboundPaymentInfo.getTechnicalCountProperty() : "").concat("\n");
     }
-
 
 }

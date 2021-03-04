@@ -7,6 +7,9 @@ import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentIntegrat
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Class to be used to map a {@link PaymentInfo} from an {@link InboundPaymentInfo}
  */
@@ -27,6 +30,9 @@ public class PaymentIntegrationMapper {
         if (inboundPaymentIntegration != null) {
             paymentIntegration = PaymentIntegration.builder().build();
             BeanUtils.copyProperties(inboundPaymentIntegration, paymentIntegration);
+            paymentIntegration.setCashbackAmount(BigDecimal.valueOf(
+                    Long.parseLong(inboundPaymentIntegration.getCashbackAmount()))
+                    .divide(BigDecimal.valueOf(100L),2, RoundingMode.HALF_EVEN));
 
         }
 

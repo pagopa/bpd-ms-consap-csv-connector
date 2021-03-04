@@ -1,11 +1,12 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch;
 
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.exception.PGPDecryptException;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.*;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoFieldSetMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoLineMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentIntegrationItemProcessListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentIntegrationItemReaderListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentIntegrationItemWriterListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentIntegrationReaderStepListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentIntegrationFieldSetMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentIntegrationLineMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentIntegration;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.step.*;
 import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
@@ -62,12 +63,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Configuration of a scheduled batch job to read and decrypt .pgp files with csv content,
- * to be processed in instances of PaymentInfo class, to be sent in an outbound Kafka channel
+ * to be processed in instances of PaymentIntegration class, to be sent in an outbound Kafka channel
  */
 
 @Data
 @Configuration
-@PropertySource("classpath:config/csvPaymentInfoReaderBatch.properties")
+@PropertySource("classpath:config/csvPaymentIntegrationReaderBatch.properties")
 @EnableBatchProcessing
 @EnableScheduling
 @RequiredArgsConstructor
@@ -159,15 +160,15 @@ public class CsvPaymentIntegrationReaderBatch {
     }
 
     /**
-     * PaymentInfoItemProcessListener
-     * PaymentInfoItemReaderListener
-     * PaymentInfoItemWriterListener
-     * PaymentInfoReaderStepListener method used to launch the configured batch job for processing payment info
+     * PaymentIntegrationItemProcessListener
+     * PaymentIntegrationItemReaderListener
+     * PaymentIntegrationItemWriterListener
+     * PaymentIntegrationReaderStepListener method used to launch the configured batch job for processing payment integration
      * from a defined directory.
      * The scheduler is based on a cron execution, based on the provided configuration
      * @throws  Exception
      */
-    @Scheduled(cron = "${batchConfiguration.CsvPaymentInfoReaderBatch.cron}")
+    @Scheduled(cron = "${batchConfiguration.CsvPaymentIntegrationReaderBatch.cron}")
     public void launchPaymentIntegrationJob() throws Exception {
 
         Date startDate = new Date();
@@ -178,7 +179,7 @@ public class CsvPaymentIntegrationReaderBatch {
         }
 
         paymentIntegrationJobLauncher().run(
-                job(), new JobParametersBuilder()
+                paymentIntegrationJob(), new JobParametersBuilder()
                         .addDate("startDateTime", startDate)
                         .toJobParameters());
 
@@ -250,8 +251,8 @@ public class CsvPaymentIntegrationReaderBatch {
      * @return instance of the FieldSetMapper to be used in the itemReader configured for the job
      */
     @Bean
-    public FieldSetMapper<InboundPaymentInfo> paymentIntegrationFieldSetMapper() {
-        return new InboundPaymentInfoFieldSetMapper(timestampPattern);
+    public FieldSetMapper<InboundPaymentIntegration> paymentIntegrationFieldSetMapper() {
+        return new InboundPaymentIntegrationFieldSetMapper(timestampPattern);
     }
 
     /**
@@ -347,9 +348,9 @@ public class CsvPaymentIntegrationReaderBatch {
 
     /**
      *
-     * @return instance of the job to process and archive .pgp files containing PaymentInfo data in csv format
+     * @return instance of the job to process and archive .pgp files containing PaymentIntegration data in csv format
      */
-    public FlowJobBuilder paymentInfoJobBuilder() throws Exception {
+    public FlowJobBuilder paymentIntegrationJobBuilder() throws Exception {
         return jobBuilderFactory.get(jobName)
                 .repository(paymentIntegrationJobRepository())
                 .start(paymentIntegrationMasterStep()).on("*").to(paymentIntegrationArchivalTask())
@@ -415,13 +416,13 @@ public class CsvPaymentIntegrationReaderBatch {
     }
 
     @Bean
-    public PaymentInfoItemReaderListener paymentIntegrationItemReaderListener(String executionDate) {
-        PaymentInfoItemReaderListener paymentInfoItemReaderListener = new PaymentInfoItemReaderListener();
-        paymentInfoItemReaderListener.setExecutionDate(executionDate);
-        paymentInfoItemReaderListener.setErrorPaymentInfosLogsPath(errorLogsPath);
-        paymentInfoItemReaderListener.setEnableOnErrorFileLogging(enableOnReadErrorFileLogging);
-        paymentInfoItemReaderListener.setEnableOnErrorLogging(enableOnReadErrorLogging);
-        return paymentInfoItemReaderListener;
+    public PaymentIntegrationItemReaderListener paymentIntegrationItemReaderListener(String executionDate) {
+        PaymentIntegrationItemReaderListener paymentIntegrationItemReaderListener = new PaymentIntegrationItemReaderListener();
+        paymentIntegrationItemReaderListener.setExecutionDate(executionDate);
+        paymentIntegrationItemReaderListener.setErrorPaymentIntegrationLogsPath(errorLogsPath);
+        paymentIntegrationItemReaderListener.setEnableOnErrorFileLogging(enableOnReadErrorFileLogging);
+        paymentIntegrationItemReaderListener.setEnableOnErrorLogging(enableOnReadErrorLogging);
+        return paymentIntegrationItemReaderListener;
     }
 
     @Bean
@@ -429,7 +430,7 @@ public class CsvPaymentIntegrationReaderBatch {
         PaymentIntegrationItemWriterListener paymentIntegrationItemWriterListener =
                 new PaymentIntegrationItemWriterListener();
         paymentIntegrationItemWriterListener.setExecutionDate(executionDate);
-        paymentIntegrationItemWriterListener.setErrorPaymentInfosLogsPath(errorLogsPath);
+        paymentIntegrationItemWriterListener.setErrorPaymentIntegrationLogsPath(errorLogsPath);
         paymentIntegrationItemWriterListener.setEnableOnErrorFileLogging(enableOnWriteErrorFileLogging);
         paymentIntegrationItemWriterListener.setEnableOnErrorLogging(enableOnWriteErrorLogging);
         return paymentIntegrationItemWriterListener;
@@ -440,7 +441,7 @@ public class CsvPaymentIntegrationReaderBatch {
         PaymentIntegrationItemProcessListener paymentIntegrationItemProcessListener =
                 new PaymentIntegrationItemProcessListener();
         paymentIntegrationItemProcessListener.setExecutionDate(executionDate);
-        paymentIntegrationItemProcessListener.setErrorPaymentInfosLogsPath(errorLogsPath);
+        paymentIntegrationItemProcessListener.setErrorPaymentIntegrationLogsPath(errorLogsPath);
         paymentIntegrationItemProcessListener.setEnableOnErrorFileLogging(enableOnProcessErrorFileLogging);
         paymentIntegrationItemProcessListener.setEnableOnErrorLogging(enableOnProcessErrorLogging);
         return paymentIntegrationItemProcessListener;
@@ -500,12 +501,12 @@ public class CsvPaymentIntegrationReaderBatch {
 
     /**
      *
-     * @return instance of a job for payment info processing
+     * @return instance of a job for payment integration processing
      */
     @SneakyThrows
     @Bean
-    public Job job() {
-        return paymentInfoJobBuilder().build();
+    public Job paymentIntegrationJob() {
+        return paymentIntegrationJobBuilder().build();
     }
 
     /**

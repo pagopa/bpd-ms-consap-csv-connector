@@ -36,7 +36,7 @@ public class InboundPaymentIntegrationFieldSetMapper implements FieldSetMapper<I
 
         String executionDateString = fieldSet.readString("executionDate");
         String periodStartDateString = fieldSet.readString("periodStart");
-        String periodEndDateString = fieldSet.readString("executionDate");
+        String periodEndDateString = fieldSet.readString("periodEnd");
 
         DateTimeFormatter dtf = timestampParser != null && !timestampParser.isEmpty() ?
                 DateTimeFormatter.ofPattern(timestampParser).withZone(ZoneId.systemDefault()) : null;
@@ -44,16 +44,17 @@ public class InboundPaymentIntegrationFieldSetMapper implements FieldSetMapper<I
         InboundPaymentIntegration inboundPaymentIntegration =
                 InboundPaymentIntegration.builder()
                         .idConsap(fieldSet.readString("idConsap"))
-                        .idReclamo(fieldSet.readString("idReclamo"))
+                        .idComplaint(fieldSet.readString("idComplaint"))
                         .idPagoPa(fieldSet.readString("idPagoPa"))
                         .fiscalCode(fieldSet.readString("fiscalCode"))
                         .iban(fieldSet.readString("iban"))
                         .name(fieldSet.readString("name"))
                         .surname(fieldSet.readString("surname"))
                         .cashbackAmount(fieldSet.readString("cashbackAmount"))
-                        .causale(fieldSet.readString("causale"))
-                        .esito(fieldSet.readString("esito"))
+                        .resultReason(fieldSet.readString("resultReason"))
+                        .result(fieldSet.readString("result"))
                         .cro(fieldSet.readString("cro"))
+                        .awardPeriodId(fieldSet.readString("awardPeriodId"))
                         .technicalCountProperty(fieldSet.readString("technicalCountProperty"))
                         .build();
 
