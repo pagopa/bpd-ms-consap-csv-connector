@@ -25,6 +25,7 @@ import org.springframework.batch.core.partition.support.MultiResourcePartitioner
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.batch.core.step.skip.SkipLimitExceededException;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
@@ -51,10 +52,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import javax.validation.ConstraintViolationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -404,9 +407,13 @@ public class CsvPaymentIntegrationReaderBatch {
                 .writer(paymentIntegrationItemWriter(paymentIntegrationItemWriteListener(executionDate)))
                 .faultTolerant()
                 .skipLimit(skipLimit)
-                .noSkip(PGPDecryptException.class)
                 .noSkip(FileNotFoundException.class)
+                .noSkip(SkipLimitExceededException.class)
                 .skip(Exception.class)
+                .noRetry(DateTimeParseException.class)
+                .noRollback(DateTimeParseException.class)
+                .noRetry(ConstraintViolationException.class)
+                .noRollback(ConstraintViolationException.class)
                 .listener(paymentIntegrationItemReaderListener(executionDate))
                 .listener(paymentIntegrationItemWriteListener(executionDate))
                 .listener(paymentIntegrationItemProcessListener(executionDate))
