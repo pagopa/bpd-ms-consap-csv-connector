@@ -1,6 +1,7 @@
 package it.gov.pagopa.bpd.consap_csv_connector.service;
 
 import it.gov.pagopa.bpd.award_winner.integration.event.model.PaymentInfo;
+import org.apache.kafka.common.header.Header;
 
 /**
  * Interface for the event publisher service, responsible for handling the transactions

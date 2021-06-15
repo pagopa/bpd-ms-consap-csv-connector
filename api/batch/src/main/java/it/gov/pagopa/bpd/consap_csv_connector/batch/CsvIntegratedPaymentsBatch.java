@@ -1,12 +1,20 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch;
 
+import it.gov.pagopa.bpd.award_winner.integration.event.model.IntegratedPayments;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.exception.PGPDecryptException;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemProcessListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemReaderListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemWriterListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoReaderStepListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsItemProcessListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsItemReaderListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsItemWriterListener;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsReaderStepListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoFieldSetMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoLineMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.InboundIntegratedPaymentsFieldSetMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.InboundIntegratedPaymentsLineMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundIntegratedPayments;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.step.*;
 import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
@@ -63,84 +71,84 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Configuration of a scheduled batch job to read and decrypt .pgp files with csv content,
- * to be processed in instances of PaymentInfo class, to be sent in an outbound Kafka channel
+ * to be processed in instances of IntegratedPayment class, to be sent in an outbound Kafka channel
  */
 
 @Data
 @Configuration
-@PropertySource("classpath:config/csvPaymentInfoReaderBatch.properties")
+@PropertySource("classpath:config/csvIntegratedPaymentsBatch.properties")
 @EnableBatchProcessing
 @EnableScheduling
 @RequiredArgsConstructor
 @Slf4j
-public class CsvPaymentInfoReaderBatch {
+public class CsvIntegratedPaymentsBatch {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final BeanFactory beanFactory;
     private AtomicInteger batchRunCounter = new AtomicInteger(0);
 
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.job.name}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.job.name}")
     private String jobName;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.isolationForCreate}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.isolationForCreate}")
     private String isolationForCreate;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.classpath}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.classpath}")
     private String directoryPath;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.successArchivePath}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.successArchivePath}")
     private String successArchivePath;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.errorArchivePath}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.errorArchivePath}")
     private String errorArchivePath;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.secretKeyPath}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.secretKeyPath}")
     private String secretKeyPath;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.passphrase}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.passphrase}")
     private String passphrase;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.applyHashing}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.applyHashing}")
     private Boolean applyHashing;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.applyDecrypt}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.applyDecrypt}")
     private Boolean applyDecrypt;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.partitionerSize}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.partitionerSize}")
     private Integer partitionerSize;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.chunkSize}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.chunkSize}")
     private Integer chunkSize;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.partitionerMaxPoolSize}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.partitionerMaxPoolSize}")
     private Integer partitionerMaxPoolSize;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.partitionerCorePoolSize}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.partitionerCorePoolSize}")
     private Integer partitionerCorePoolSize;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.readerMaxPoolSize}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.readerMaxPoolSize}")
     private Integer readerMaxPoolSize;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.readerCorePoolSize}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.readerCorePoolSize}")
     private Integer readerCorePoolSize;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.skipLimit}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.skipLimit}")
     private Integer skipLimit;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.linesToSkip}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.linesToSkip}")
     private Integer linesToSkip;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.timestampPattern}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.timestampPattern}")
     private String timestampPattern;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.tablePrefix}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.tablePrefix}")
     private String tablePrefix;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.errorLogsPath}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.errorLogsPath}")
     private String errorLogsPath;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.enableOnReadErrorFileLogging}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.enableOnReadErrorFileLogging}")
     private Boolean enableOnReadErrorFileLogging;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.enableOnReadErrorLogging}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.enableOnReadErrorLogging}")
     private Boolean enableOnReadErrorLogging;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.enableOnProcessErrorFileLogging}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.enableOnProcessErrorFileLogging}")
     private Boolean enableOnProcessErrorFileLogging;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.enableOnProcessErrorLogging}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.enableOnProcessErrorLogging}")
     private Boolean enableOnProcessErrorLogging;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.enableOnWriteErrorFileLogging}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.enableOnWriteErrorFileLogging}")
     private Boolean enableOnWriteErrorFileLogging;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.enableOnWriteErrorLogging}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.enableOnWriteErrorLogging}")
     private Boolean enableOnWriteErrorLogging;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.executorPoolSize}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.executorPoolSize}")
     private Integer executorPoolSize;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.checkpointFrequency}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.checkpointFrequency}")
     private Integer checkpointFrequency;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.enableCheckpointFrequency}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.enableCheckpointFrequency}")
     private Boolean enableCheckpointFrequency;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.applyEncrypt}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.applyEncrypt}")
     private Boolean applyEncrypt;
-    @Value("${batchConfiguration.CsvPaymentInfoReaderBatch.publicKeyPath}")
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.publicKeyPath}")
     private String publicKey;
 
     private DataSource dataSource;
@@ -178,8 +186,8 @@ public class CsvPaymentInfoReaderBatch {
             createWriterTrackerService();
         }
 
-        paymentInfoJobLauncher().run(
-                paymentInfoJob(), new JobParametersBuilder()
+        integratedPaymentJobLauncher().run(
+                integratedPaymentJob(), new JobParametersBuilder()
                         .addDate("startDateTime", startDate)
                         .toJobParameters());
 
@@ -197,7 +205,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return configured instance of TransactionManager
      */
     @Bean
-    public PlatformTransactionManager getPaymentInfoTransactionManager() {
+    public PlatformTransactionManager getIntegratedPaymentTransactionManager() {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(dataSource);
         return dataSourceTransactionManager;
@@ -209,14 +217,14 @@ public class CsvPaymentInfoReaderBatch {
      * @throws Exception
      */
     @Bean
-    public JobRepository getPaymentInfoJobRepository() throws Exception {
-            JobRepositoryFactoryBean jobRepositoryFactoryBean = new JobRepositoryFactoryBean();
-            jobRepositoryFactoryBean.setTransactionManager( getPaymentInfoTransactionManager());
-            jobRepositoryFactoryBean.setTablePrefix(tablePrefix);
-            jobRepositoryFactoryBean.setDataSource(dataSource);
-            jobRepositoryFactoryBean.setIsolationLevelForCreate(isolationForCreate);
-            jobRepositoryFactoryBean.afterPropertiesSet();
-            return jobRepositoryFactoryBean.getObject();
+    public JobRepository getIntegratedPaymentJobRepository() throws Exception {
+        JobRepositoryFactoryBean jobRepositoryFactoryBean = new JobRepositoryFactoryBean();
+        jobRepositoryFactoryBean.setTransactionManager( getIntegratedPaymentTransactionManager());
+        jobRepositoryFactoryBean.setTablePrefix(tablePrefix);
+        jobRepositoryFactoryBean.setDataSource(dataSource);
+        jobRepositoryFactoryBean.setIsolationLevelForCreate(isolationForCreate);
+        jobRepositoryFactoryBean.afterPropertiesSet();
+        return jobRepositoryFactoryBean.getObject();
     }
 
     /**
@@ -225,9 +233,9 @@ public class CsvPaymentInfoReaderBatch {
      * @throws Exception
      */
     @Bean
-    public JobLauncher paymentInfoJobLauncher() throws Exception {
+    public JobLauncher integratedPaymentJobLauncher() throws Exception {
         SimpleJobLauncher simpleJobLauncher = new SimpleJobLauncher();
-        simpleJobLauncher.setJobRepository(getPaymentInfoJobRepository());
+        simpleJobLauncher.setJobRepository(getIntegratedPaymentJobRepository());
         return simpleJobLauncher;
     }
 
@@ -236,7 +244,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return instance of the LineTokenizer to be used in the itemReader configured for the job
      */
     @Bean
-    public LineTokenizer paymentInfoLineTokenizer() {
+    public LineTokenizer integratedPaymentLineTokenizer() {
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
         delimitedLineTokenizer.setDelimiter(";");
         delimitedLineTokenizer.setNames(
@@ -249,19 +257,19 @@ public class CsvPaymentInfoReaderBatch {
      * @return instance of the FieldSetMapper to be used in the itemReader configured for the job
      */
     @Bean
-    public FieldSetMapper<InboundPaymentInfo> paymentInfoFieldSetMapper() {
-        return new InboundPaymentInfoFieldSetMapper(timestampPattern);
+    public FieldSetMapper<InboundIntegratedPayments> integratedPaymentFieldSetMapper() {
+        return new InboundIntegratedPaymentsFieldSetMapper(timestampPattern);
     }
 
     /**
      *
      * @return instance of the LineMapper to be used in the itemReader configured for the job
      */
-    public LineMapper<InboundPaymentInfo> paymentInfoLineMapper(String file) {
-        InboundPaymentInfoLineMapper lineMapper = new InboundPaymentInfoLineMapper();
-        lineMapper.setTokenizer(paymentInfoLineTokenizer());
+    public LineMapper<InboundIntegratedPayments> integratedPaymentLineMapper(String file) {
+        InboundIntegratedPaymentsLineMapper lineMapper = new InboundIntegratedPaymentsLineMapper();
+        lineMapper.setTokenizer(integratedPaymentLineTokenizer());
         lineMapper.setFilename(file);
-        lineMapper.setFieldSetMapper(paymentInfoFieldSetMapper());
+        lineMapper.setFieldSetMapper(integratedPaymentFieldSetMapper());
         return lineMapper;
     }
 
@@ -274,11 +282,11 @@ public class CsvPaymentInfoReaderBatch {
     @SneakyThrows
     @Bean
     @StepScope
-    public FlatFileItemReader<InboundPaymentInfo> paymentInfoItemReader(
+    public FlatFileItemReader<InboundIntegratedPayments> integratedPaymentItemReader(
             @Value("#{stepExecutionContext['fileName']}") String file) {
         PGPFlatFileItemReader flatFileItemReader = new PGPFlatFileItemReader(secretKeyPath, passphrase, applyDecrypt);
         flatFileItemReader.setResource(new UrlResource(file));
-        flatFileItemReader.setLineMapper(paymentInfoLineMapper(file));
+        flatFileItemReader.setLineMapper(integratedPaymentLineMapper(file));
         flatFileItemReader.setLinesToSkip(linesToSkip);
         return flatFileItemReader;
     }
@@ -289,8 +297,8 @@ public class CsvPaymentInfoReaderBatch {
      */
     @Bean
     @StepScope
-    public ItemProcessor<InboundPaymentInfo, InboundPaymentInfo> paymentInfoItemProcessor() {
-        return beanFactory.getBean(InboundPaymentInfoItemProcessor.class);
+    public ItemProcessor<InboundIntegratedPayments, InboundIntegratedPayments> integratedPaymentItemProcessor() {
+        return beanFactory.getBean(InboundIntegratedPaymentsItemProcessor.class);
     }
 
     /**
@@ -299,14 +307,14 @@ public class CsvPaymentInfoReaderBatch {
      */
     @Bean
     @StepScope
-    public ItemWriter<InboundPaymentInfo> getPaymentInfoItemWriter(PaymentInfoItemWriterListener writerListener) {
-        PaymentInfoWriter paymentInfoWriter = beanFactory.getBean(PaymentInfoWriter.class, writerTrackerService);
-        paymentInfoWriter.setPaymentInfoItemWriterListener(writerListener);
-        paymentInfoWriter.setApplyHashing(applyHashing);
-        paymentInfoWriter.setExecutor(paymentInfoWriterExecutor());
-        paymentInfoWriter.setCheckpointFrequency(checkpointFrequency);
-        paymentInfoWriter.setEnableCheckpointFrequency(enableCheckpointFrequency);
-        return paymentInfoWriter;
+    public ItemWriter<InboundIntegratedPayments> getIntegratedPaymentItemWriter(IntegratedPaymentsItemWriterListener writerListener) {
+        IntegratedPaymentsWriter integratedPaymentsWriter = beanFactory.getBean(IntegratedPaymentsWriter.class, writerTrackerService);
+        integratedPaymentsWriter.setIntegratedPaymentsItemWriterListener(writerListener);
+        integratedPaymentsWriter.setApplyHashing(applyHashing);
+        integratedPaymentsWriter.setExecutor(integratedPaymentWriterExecutor());
+        integratedPaymentsWriter.setCheckpointFrequency(checkpointFrequency);
+        integratedPaymentsWriter.setEnableCheckpointFrequency(enableCheckpointFrequency);
+        return integratedPaymentsWriter;
     }
 
     /**
@@ -314,7 +322,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return step instance based on the tasklet to be used for file archival at the end of the reading process
      */
     @Bean
-    public Step terminationTask() {
+    public Step integratedPaymentTerminationTask() {
         if (writerTrackerService == null) {
             createWriterTrackerService();
         }
@@ -328,7 +336,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return step instance based on the tasklet to be used for file archival at the end of the reading process
      */
     @Bean
-    public Step paymentInfoArchivalTask() {
+    public Step integratedPaymentArchivalTask() {
         ArchivalTasklet archivalTasklet = new ArchivalTasklet();
         archivalTasklet.setSuccessPath(successArchivePath);
         archivalTasklet.setErrorPath(errorArchivePath);
@@ -343,10 +351,10 @@ public class CsvPaymentInfoReaderBatch {
      *
      * @return instance of the job to process and archive .pgp files containing PaymentInfo data in csv format
      */
-    public FlowJobBuilder paymentInfoJobBuilder() throws Exception {
+    public FlowJobBuilder integratedPaymentJobBuilder() throws Exception {
         return jobBuilderFactory.get(jobName)
-                .repository(getPaymentInfoJobRepository())
-                .start(paymentInfoMasterStep()).on("*").to(paymentInfoArchivalTask())
+                .repository(getIntegratedPaymentJobRepository())
+                .start(integratedPaymentMasterStep()).on("*").to(integratedPaymentArchivalTask())
                 .build();
     }
 
@@ -357,7 +365,7 @@ public class CsvPaymentInfoReaderBatch {
      */
     @Bean
     @JobScope
-    public Partitioner paymentInfoPartitioner() throws IOException {
+    public Partitioner integratedPaymentPartitioner() throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         partitioner.setResources(resolver.getResources(directoryPath));
@@ -372,11 +380,11 @@ public class CsvPaymentInfoReaderBatch {
      * @throws Exception
      */
     @Bean
-    public Step paymentInfoMasterStep() throws IOException {
+    public Step integratedPaymentMasterStep() throws IOException {
         return stepBuilderFactory.get("csv-payment-info-connector-master-step")
-                .partitioner(paymentInfoWorkerStep(writerTrackerService))
-                .partitioner("partition", paymentInfoPartitioner())
-                .taskExecutor(paymentInfoPartitionerTaskExecutor()).build();
+                .partitioner(integratedPaymentWorkerStep(writerTrackerService))
+                .partitioner("partition", integratedPaymentPartitioner())
+                .taskExecutor(integratedPaymentPartitionerTaskExecutor()).build();
     }
 
     /**
@@ -386,67 +394,67 @@ public class CsvPaymentInfoReaderBatch {
      * @throws Exception
      */
     @Bean
-    public TaskletStep paymentInfoWorkerStep(WriterTrackerService writerTrackerService) {
+    public TaskletStep integratedPaymentWorkerStep(WriterTrackerService writerTrackerService) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String executionDate = OffsetDateTime.now().format(fmt);
 
-        return stepBuilderFactory.get("csv-payment-info-connector-master-inner-step").<InboundPaymentInfo, InboundPaymentInfo>chunk(chunkSize)
-                .reader(paymentInfoItemReader(null))
-                .processor(paymentInfoItemProcessor())
-                .writer(getPaymentInfoItemWriter(paymentInfoItemWriteListener(executionDate)))
+        return stepBuilderFactory.get("csv-payment-info-connector-master-inner-step").<InboundIntegratedPayments, InboundIntegratedPayments>chunk(chunkSize)
+                .reader(integratedPaymentItemReader(null))
+                .processor(integratedPaymentItemProcessor())
+                .writer(getIntegratedPaymentItemWriter(integratedPaymentWriteListener(executionDate)))
                 .faultTolerant()
                 .skipLimit(skipLimit)
                 .noSkip(PGPDecryptException.class)
                 .noSkip(FileNotFoundException.class)
                 .skip(Exception.class)
-                .listener(paymentInfoItemReaderListener(executionDate))
-                .listener(paymentInfoItemWriteListener(executionDate))
-                .listener(paymentInfoItemProcessListener(executionDate))
-                .listener(paymentInfoStepListener(writerTrackerService))
-                .taskExecutor(readerTaskExecutor())
+                .listener(integratedPaymentItemReaderListener(executionDate))
+                .listener(integratedPaymentWriteListener(executionDate))
+                .listener(integratedPaymentItemProcessListener(executionDate))
+                .listener(integratedPaymentsStepListener(writerTrackerService))
+                .taskExecutor(integratedPaymentReaderTaskExecutor())
                 .build();
     }
 
     @Bean
-    public PaymentInfoItemReaderListener paymentInfoItemReaderListener(String executionDate) {
-        PaymentInfoItemReaderListener paymentInfoItemReaderListener = new PaymentInfoItemReaderListener();
-        paymentInfoItemReaderListener.setExecutionDate(executionDate);
-        paymentInfoItemReaderListener.setErrorPaymentInfosLogsPath(errorLogsPath);
-        paymentInfoItemReaderListener.setEnableOnErrorFileLogging(enableOnReadErrorFileLogging);
-        paymentInfoItemReaderListener.setEnableOnErrorLogging(enableOnReadErrorLogging);
-        return paymentInfoItemReaderListener;
+    public IntegratedPaymentsItemReaderListener integratedPaymentItemReaderListener(String executionDate) {
+        IntegratedPaymentsItemReaderListener integratedPaymentsItemReaderListener = new IntegratedPaymentsItemReaderListener();
+        integratedPaymentsItemReaderListener.setExecutionDate(executionDate);
+        integratedPaymentsItemReaderListener.setErrorPaymentInfosLogsPath(errorLogsPath);
+        integratedPaymentsItemReaderListener.setEnableOnErrorFileLogging(enableOnReadErrorFileLogging);
+        integratedPaymentsItemReaderListener.setEnableOnErrorLogging(enableOnReadErrorLogging);
+        return integratedPaymentsItemReaderListener;
     }
 
     @Bean
-    public PaymentInfoItemWriterListener paymentInfoItemWriteListener(String executionDate) {
-        PaymentInfoItemWriterListener paymentInfoItemWriterListener = new PaymentInfoItemWriterListener();
-        paymentInfoItemWriterListener.setExecutionDate(executionDate);
-        paymentInfoItemWriterListener.setErrorPaymentInfosLogsPath(errorLogsPath);
-        paymentInfoItemWriterListener.setEnableOnErrorFileLogging(enableOnWriteErrorFileLogging);
-        paymentInfoItemWriterListener.setEnableOnErrorLogging(enableOnWriteErrorLogging);
-        return paymentInfoItemWriterListener;
+    public IntegratedPaymentsItemWriterListener integratedPaymentWriteListener(String executionDate) {
+        IntegratedPaymentsItemWriterListener integratedPaymentsItemWriterListener = new IntegratedPaymentsItemWriterListener();
+        integratedPaymentsItemWriterListener.setExecutionDate(executionDate);
+        integratedPaymentsItemWriterListener.setErrorPaymentInfosLogsPath(errorLogsPath);
+        integratedPaymentsItemWriterListener.setEnableOnErrorFileLogging(enableOnWriteErrorFileLogging);
+        integratedPaymentsItemWriterListener.setEnableOnErrorLogging(enableOnWriteErrorLogging);
+        return integratedPaymentsItemWriterListener;
     }
 
     @Bean
-    public PaymentInfoItemProcessListener paymentInfoItemProcessListener(String executionDate) {
-        PaymentInfoItemProcessListener paymentInfoItemProcessListener = new PaymentInfoItemProcessListener();
-        paymentInfoItemProcessListener.setExecutionDate(executionDate);
-        paymentInfoItemProcessListener.setErrorPaymentInfosLogsPath(errorLogsPath);
-        paymentInfoItemProcessListener.setEnableOnErrorFileLogging(enableOnProcessErrorFileLogging);
-        paymentInfoItemProcessListener.setEnableOnErrorLogging(enableOnProcessErrorLogging);
-        return paymentInfoItemProcessListener;
+    public IntegratedPaymentsItemProcessListener integratedPaymentItemProcessListener(String executionDate) {
+        IntegratedPaymentsItemProcessListener integratedPaymentsItemProcessListener = new IntegratedPaymentsItemProcessListener();
+        integratedPaymentsItemProcessListener.setExecutionDate(executionDate);
+        integratedPaymentsItemProcessListener.setErrorPaymentInfosLogsPath(errorLogsPath);
+        integratedPaymentsItemProcessListener.setEnableOnErrorFileLogging(enableOnProcessErrorFileLogging);
+        integratedPaymentsItemProcessListener.setEnableOnErrorLogging(enableOnProcessErrorLogging);
+        return integratedPaymentsItemProcessListener;
     }
 
     @Bean
-    public PaymentInfoReaderStepListener paymentInfoStepListener(WriterTrackerService writerTrackerService) {
-        PaymentInfoReaderStepListener paymentInfoReaderStepListener = new PaymentInfoReaderStepListener();
-        paymentInfoReaderStepListener.setErrorPath(errorArchivePath);
-        paymentInfoReaderStepListener.setSuccessPath(successArchivePath);
-        paymentInfoReaderStepListener.setWriterTrackerService(writerTrackerService);
-        paymentInfoReaderStepListener.setApplyEncrypt(applyEncrypt);
-        paymentInfoReaderStepListener.setErrorDir(errorLogsPath);
-        paymentInfoReaderStepListener.setPublicKeyDir(publicKey);
-        return paymentInfoReaderStepListener;
+    public IntegratedPaymentsReaderStepListener integratedPaymentsStepListener(WriterTrackerService writerTrackerService) {
+        IntegratedPaymentsReaderStepListener integratedPaymentsReaderStepListener = new IntegratedPaymentsReaderStepListener();
+        integratedPaymentsReaderStepListener.setErrorPath(errorArchivePath);
+        integratedPaymentsReaderStepListener.setSuccessPath(successArchivePath);
+        integratedPaymentsReaderStepListener.setWriterTrackerService(writerTrackerService);
+        integratedPaymentsReaderStepListener.setApplyEncrypt(applyEncrypt);
+        integratedPaymentsReaderStepListener.setErrorDir(errorLogsPath);
+        integratedPaymentsReaderStepListener.setPublicKeyDir(publicKey);
+        return integratedPaymentsReaderStepListener;
     }
 
     /**
@@ -454,7 +462,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return bean configured for usage in the partitioner instance of the job
      */
     @Bean
-    public TaskExecutor paymentInfoPartitionerTaskExecutor() {
+    public TaskExecutor integratedPaymentPartitionerTaskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setMaxPoolSize(partitionerMaxPoolSize);
         taskExecutor.setCorePoolSize(partitionerCorePoolSize);
@@ -467,7 +475,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return bean configured for usage for chunk reading of a single file
      */
     @Bean
-    public Executor paymentInfoWriterExecutor() {
+    public Executor integratedPaymentWriterExecutor() {
         if (this.executorService == null) {
             executorService =  Executors.newFixedThreadPool(executorPoolSize);
         }
@@ -478,7 +486,7 @@ public class CsvPaymentInfoReaderBatch {
      *
      * @return bean configured for usage for chunk reading of a single file
      */
-    public TaskExecutor readerTaskExecutor() {
+    public TaskExecutor integratedPaymentReaderTaskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setMaxPoolSize(readerMaxPoolSize);
         taskExecutor.setCorePoolSize(readerCorePoolSize);
@@ -493,8 +501,8 @@ public class CsvPaymentInfoReaderBatch {
      */
     @SneakyThrows
     @Bean
-    public Job paymentInfoJob() {
-        return paymentInfoJobBuilder().build();
+    public Job integratedPaymentJob() {
+        return integratedPaymentJobBuilder().build();
     }
 
     /**
@@ -502,7 +510,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return bean for a ThreadPoolTaskScheduler
      */
     @Bean
-    public TaskScheduler paymentInfoPoolScheduler() {
+    public TaskScheduler integratedPaymentPoolScheduler() {
         return new ThreadPoolTaskScheduler();
     }
 
@@ -510,5 +518,7 @@ public class CsvPaymentInfoReaderBatch {
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
+
 
 }

@@ -11,6 +11,7 @@ import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.header.Headers;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ public class PaymentInfoWriter implements ItemWriter<InboundPaymentInfo> {
     private Boolean applyHashing;
     private Boolean enableCheckpointFrequency;
     private Integer checkpointFrequency;
+    private Headers headers;
 
     /**
      * Implementation of the {@link ItemWriter} write method, used for {@link PaymentInfo} as the processed class
