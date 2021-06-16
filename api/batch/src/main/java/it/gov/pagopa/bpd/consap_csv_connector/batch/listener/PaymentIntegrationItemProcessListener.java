@@ -60,23 +60,23 @@ public class PaymentIntegrationItemProcessListener
 
     }
 
-    private String buildCsv(InboundPaymentIntegration inboundPaymentInfo) {
-        return (inboundPaymentInfo.getIdConsap() != null ? inboundPaymentInfo.getIdConsap() : "").concat(";")
-                .concat(inboundPaymentInfo.getIdComplaint() != null ? inboundPaymentInfo.getIdComplaint() : "").concat(";")
-                .concat(inboundPaymentInfo.getIdPagoPa() != null ? inboundPaymentInfo.getIdPagoPa() : "").concat(";")
-                .concat(inboundPaymentInfo.getFiscalCode() != null ? inboundPaymentInfo.getFiscalCode() : "").concat(";")
-                .concat(inboundPaymentInfo.getIban() != null ? inboundPaymentInfo.getIban() : "").concat(";")
-                .concat(inboundPaymentInfo.getName() != null ? inboundPaymentInfo.getName() : "").concat(";")
-                .concat(inboundPaymentInfo.getSurname() != null ? inboundPaymentInfo.getSurname() : "").concat(";")
-                .concat(inboundPaymentInfo.getCashbackAmount() != null ? inboundPaymentInfo.getCashbackAmount() : "").concat(";")
-                .concat(inboundPaymentInfo.getResultReason() != null ? inboundPaymentInfo.getResultReason() : "").concat(";")
-                .concat(inboundPaymentInfo.getPeriodStartDate() != null ? inboundPaymentInfo.getPeriodStartDate() : "").concat(";")
-                .concat(inboundPaymentInfo.getPeriodEndDate() != null ? inboundPaymentInfo.getPeriodEndDate() : "").concat(";")
-                .concat(inboundPaymentInfo.getAwardPeriodId() != null ? inboundPaymentInfo.getAwardPeriodId() : "").concat(";")
-                .concat(inboundPaymentInfo.getResult() != null ? inboundPaymentInfo.getResult() : "").concat(";")
-                .concat(inboundPaymentInfo.getCro() != null ? inboundPaymentInfo.getCro() : "").concat(";")
-                .concat(inboundPaymentInfo.getExecutionDate() != null ? inboundPaymentInfo.getExecutionDate() : "").concat("\n")
-                .concat(inboundPaymentInfo.getTechnicalCountProperty() != null ? inboundPaymentInfo.getTechnicalCountProperty() : "").concat("\n");
+    private String buildCsv(InboundPaymentIntegration inboundPaymentIntegration) {
+        return (inboundPaymentIntegration.getIdConsap() != null ? inboundPaymentIntegration.getIdConsap() : "").concat(";")
+                .concat(inboundPaymentIntegration.getIdComplaint() != null ? inboundPaymentIntegration.getIdComplaint() : "").concat(";")
+                .concat(inboundPaymentIntegration.getIdPagoPa() != null ? inboundPaymentIntegration.getIdPagoPa() : "").concat(";")
+                .concat(inboundPaymentIntegration.getFiscalCode() != null ? inboundPaymentIntegration.getFiscalCode() : "").concat(";")
+                .concat(inboundPaymentIntegration.getIban() != null ? inboundPaymentIntegration.getIban() : "").concat(";")
+                .concat(inboundPaymentIntegration.getName() != null ? inboundPaymentIntegration.getName() : "").concat(";")
+                .concat(inboundPaymentIntegration.getSurname() != null ? inboundPaymentIntegration.getSurname() : "").concat(";")
+                .concat(inboundPaymentIntegration.getJackpotAmount() != null ? inboundPaymentIntegration.getJackpotAmount() : "").concat(";")
+                .concat(inboundPaymentIntegration.getAmount() != null ? inboundPaymentIntegration.getAmount() : "").concat(";")
+                .concat(inboundPaymentIntegration.getCashbackAmount() != null ? inboundPaymentIntegration.getCashbackAmount() : "").concat(";")
+                .concat(inboundPaymentIntegration.getResultReason() != null ? inboundPaymentIntegration.getResultReason() : "").concat(";")
+                .concat(inboundPaymentIntegration.getPeriodStartDate() != null ? inboundPaymentIntegration.getPeriodStartDate() : "").concat(";")
+                .concat(inboundPaymentIntegration.getPeriodEndDate() != null ? inboundPaymentIntegration.getPeriodEndDate() : "").concat(";")
+                .concat(inboundPaymentIntegration.getResult() != null ? inboundPaymentIntegration.getResult() : "").concat(";")
+                .concat(inboundPaymentIntegration.getCro() != null ? inboundPaymentIntegration.getCro() : "").concat(";")
+                .concat(inboundPaymentIntegration.getExecutionDate() != null ? inboundPaymentIntegration.getExecutionDate() : "").concat("\n");
     }
 
 }

@@ -96,21 +96,21 @@ public class PaymentIntegrationItemWriterListener implements ItemWriteListener<I
 
     private String buildCsv(InboundPaymentIntegration inboundPaymentInfo) {
         return (inboundPaymentInfo.getIdConsap() != null ? inboundPaymentInfo.getIdConsap() : "").concat(";")
-                .concat(inboundPaymentInfo.getIdComplaint() != null ? inboundPaymentInfo.getIdComplaint() : "").concat(";")
                 .concat(inboundPaymentInfo.getIdPagoPa() != null ? inboundPaymentInfo.getIdPagoPa() : "").concat(";")
                 .concat(inboundPaymentInfo.getFiscalCode() != null ? inboundPaymentInfo.getFiscalCode() : "").concat(";")
                 .concat(inboundPaymentInfo.getIban() != null ? inboundPaymentInfo.getIban() : "").concat(";")
                 .concat(inboundPaymentInfo.getName() != null ? inboundPaymentInfo.getName() : "").concat(";")
                 .concat(inboundPaymentInfo.getSurname() != null ? inboundPaymentInfo.getSurname() : "").concat(";")
+                .concat(inboundPaymentInfo.getAmount() != null ? inboundPaymentInfo.getAmount() : "").concat(";")
                 .concat(inboundPaymentInfo.getCashbackAmount() != null ? inboundPaymentInfo.getCashbackAmount() : "").concat(";")
+                .concat(inboundPaymentInfo.getJackpotAmount() != null ? inboundPaymentInfo.getJackpotAmount() : "").concat(";")
                 .concat(inboundPaymentInfo.getResultReason() != null ? inboundPaymentInfo.getResultReason() : "").concat(";")
                 .concat(inboundPaymentInfo.getPeriodStartDate() != null ? inboundPaymentInfo.getPeriodStartDate() : "").concat(";")
                 .concat(inboundPaymentInfo.getPeriodEndDate() != null ? inboundPaymentInfo.getPeriodEndDate() : "").concat(";")
-                .concat(inboundPaymentInfo.getAwardPeriodId() != null ? inboundPaymentInfo.getAwardPeriodId() : "").concat(";")
                 .concat(inboundPaymentInfo.getResult() != null ? inboundPaymentInfo.getResult() : "").concat(";")
                 .concat(inboundPaymentInfo.getCro() != null ? inboundPaymentInfo.getCro() : "").concat(";")
-                .concat(inboundPaymentInfo.getExecutionDate() != null ? inboundPaymentInfo.getExecutionDate() : "").concat("\n")
-                .concat(inboundPaymentInfo.getTechnicalCountProperty() != null ? inboundPaymentInfo.getTechnicalCountProperty() : "").concat("\n");
+                .concat(inboundPaymentInfo.getExecutionDate() != null ? inboundPaymentInfo.getExecutionDate() : "")
+                .concat(inboundPaymentInfo.getIdComplaint() != null ? inboundPaymentInfo.getIdComplaint() : "").concat("\n");
     }
 
 }

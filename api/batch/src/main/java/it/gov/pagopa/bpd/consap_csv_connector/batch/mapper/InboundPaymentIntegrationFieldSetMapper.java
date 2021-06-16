@@ -50,16 +50,15 @@ public class InboundPaymentIntegrationFieldSetMapper implements FieldSetMapper<I
                         .iban(fieldSet.readString("iban"))
                         .name(fieldSet.readString("name"))
                         .surname(fieldSet.readString("surname"))
+                        .amount(fieldSet.readString("amount"))
+                        .jackpotAmount(fieldSet.readString("jackpotAmount"))
                         .cashbackAmount(fieldSet.readString("cashbackAmount"))
                         .resultReason(fieldSet.readString("resultReason"))
                         .result(fieldSet.readString("result"))
                         .cro(fieldSet.readString("cro"))
-                        .awardPeriodId(fieldSet.readString("awardPeriodId"))
-                        .technicalCountProperty(fieldSet.readString("technicalCountProperty"))
                         .build();
 
-        if (executionDateString != null
-                && !executionDateString.isEmpty()) {
+        if (!executionDateString.isEmpty()) {
 
             LocalDate dateTime = dtf != null ?
                     LocalDate.parse(executionDateString, dtf) :
@@ -70,8 +69,7 @@ public class InboundPaymentIntegrationFieldSetMapper implements FieldSetMapper<I
             }
         }
 
-        if (periodStartDateString != null
-                && !periodStartDateString.isEmpty()) {
+        if (!periodStartDateString.isEmpty()) {
 
             LocalDate dateTime = dtf != null ?
                     LocalDate.parse(periodStartDateString, dtf) :
@@ -82,8 +80,7 @@ public class InboundPaymentIntegrationFieldSetMapper implements FieldSetMapper<I
             }
         }
 
-        if (periodEndDateString != null
-                && !periodEndDateString.isEmpty()) {
+        if (!periodEndDateString.isEmpty()) {
 
             LocalDate dateTime = dtf != null ?
                     LocalDate.parse(periodEndDateString, dtf) :

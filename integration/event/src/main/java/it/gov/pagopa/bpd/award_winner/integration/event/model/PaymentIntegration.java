@@ -3,7 +3,6 @@ package it.gov.pagopa.bpd.award_winner.integration.event.model;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 /**
  * Model for transaction to be sent in the outbound channel
@@ -29,6 +28,10 @@ public class PaymentIntegration {
 
     String surname;
 
+    BigDecimal amount;
+
+    BigDecimal jackpotAmount;
+
     BigDecimal cashbackAmount;
 
     String resultReason;
@@ -37,14 +40,10 @@ public class PaymentIntegration {
 
     String periodEndDate;
 
-    String awardPeriodId;
-
     String result;
 
     String cro;
 
     String executionDate;
-
-    String technicalCountProperty;
 
 }

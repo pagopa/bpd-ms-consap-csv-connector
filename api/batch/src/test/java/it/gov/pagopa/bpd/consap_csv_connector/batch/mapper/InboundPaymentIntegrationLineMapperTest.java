@@ -36,9 +36,8 @@ public class InboundPaymentIntegrationLineMapperTest {
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
         delimitedLineTokenizer.setDelimiter(";");
         delimitedLineTokenizer.setNames(
-                "idConsap", "idComplaint", "idPagoPa", "fiscalCode", "iban", "name", "surname", "cashbackAmount",
-                "resultReason", "periodStart", "periodEnd", "awardPeriodId", "result", "cro", "executionDate",
-                "technicalCountProperty");
+                "idConsap", "idPagoPa", "fiscalCode", "iban", "name", "surname", "amount", "cashbackAmount", "jackpotAmount",
+                "resultReason", "periodStart", "periodEnd", "result", "cro", "executionDate", "idComplaint");
         lineAwareMapper.setTokenizer(delimitedLineTokenizer);
         lineAwareMapper.setFieldSetMapper(new InboundPaymentIntegrationFieldSetMapper("dd/MM/yyyy"));
     }
@@ -48,8 +47,8 @@ public class InboundPaymentIntegrationLineMapperTest {
 
         try {
             InboundPaymentIntegration inboundPaymentIntegration = lineAwareMapper.mapLine(
-                    "000000001;000000001;000000001;fiscalCode;iban;name;surname;100;result reason;" +
-                            "01/07/2021;01/06/2021;1;ORDINE ESEGUITO;17270006101;27/07/2021;technicalProperty",
+                    "000000001;000000001;fiscalCode;iban;name;surname;100;100;100;result reason;" +
+                            "01/07/2021;01/06/2021;ORDINE ESEGUITO;17270006101;27/07/2021;000000001",
                     1);
             Assert.assertEquals(getInboundPaymentIntegration(), inboundPaymentIntegration);
             Assert.assertEquals((Integer) 1, inboundPaymentIntegration.getLineNumber());
@@ -77,11 +76,9 @@ public class InboundPaymentIntegrationLineMapperTest {
                 .idConsap("000000001")
                 .idComplaint("000000001")
                 .idPagoPa("000000001")
-                .awardPeriodId("1")
                 .periodStartDate("01/01/2021")
                 .periodEndDate("01/06/2021")
                 .iban("iban")
-                .technicalCountProperty("technicalProperty")
                 .fiscalCode("fiscalCode")
                 .name("name")
                 .surname("surname")

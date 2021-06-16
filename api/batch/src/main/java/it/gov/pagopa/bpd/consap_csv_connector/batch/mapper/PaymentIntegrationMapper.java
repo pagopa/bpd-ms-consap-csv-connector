@@ -33,7 +33,12 @@ public class PaymentIntegrationMapper {
             paymentIntegration.setCashbackAmount(BigDecimal.valueOf(
                     Long.parseLong(inboundPaymentIntegration.getCashbackAmount()))
                     .divide(BigDecimal.valueOf(100L),2, RoundingMode.HALF_EVEN));
-
+            paymentIntegration.setAmount(BigDecimal.valueOf(
+                    Long.parseLong(inboundPaymentIntegration.getAmount()))
+                    .divide(BigDecimal.valueOf(100L),2, RoundingMode.HALF_EVEN));
+            paymentIntegration.setJackpotAmount(BigDecimal.valueOf(
+                    Long.parseLong(inboundPaymentIntegration.getJackpotAmount()))
+                    .divide(BigDecimal.valueOf(100L),2, RoundingMode.HALF_EVEN));
         }
 
         return paymentIntegration;

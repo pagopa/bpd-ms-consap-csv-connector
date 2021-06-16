@@ -53,7 +53,17 @@ public class InboundPaymentIntegration {
     @NotBlank
     @NotNull
     @Size(max = 6)
+    String amount;
+
+    @NotBlank
+    @NotNull
+    @Size(max = 6)
     String cashbackAmount;
+
+    @NotBlank
+    @NotNull
+    @Size(max = 6)
+    String jackpotAmount;
 
     @NotBlank
     @NotNull
@@ -72,11 +82,6 @@ public class InboundPaymentIntegration {
 
     @NotNull
     @NotBlank
-    @Size(max = 2)
-    String awardPeriodId;
-
-    @NotNull
-    @NotBlank
     @Size(max = 25)
     String result;
 
@@ -89,11 +94,6 @@ public class InboundPaymentIntegration {
     @NotBlank
     @Size(max = 10)
     String executionDate;
-
-    @NotNull
-    @NotBlank
-    @Size(max = 50)
-    String technicalCountProperty;
 
     Integer lineNumber;
     String filename;

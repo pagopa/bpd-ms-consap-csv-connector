@@ -243,9 +243,8 @@ public class CsvPaymentIntegrationReaderBatch {
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
         delimitedLineTokenizer.setDelimiter(";");
         delimitedLineTokenizer.setNames(
-                "idConsap", "idComplaint", "idPagoPa", "fiscalCode", "iban", "name", "surname", "cashbackAmount",
-                "resultReason", "periodStart", "periodEnd", "awardPeriodId", "result", "cro", "executionDate",
-                "technicalCountProperty");
+                "idConsap", "idPagoPa", "fiscalCode", "iban", "name", "surname", "amount", "cashbackAmount", "jackpotAmount",
+                "resultReason", "periodStart", "periodEnd", "result", "cro", "executionDate", "idComplaint");
         return delimitedLineTokenizer;
     }
 
