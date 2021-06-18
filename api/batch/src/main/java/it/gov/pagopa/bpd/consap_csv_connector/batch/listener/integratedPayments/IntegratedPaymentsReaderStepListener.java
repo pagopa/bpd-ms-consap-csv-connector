@@ -88,14 +88,14 @@ public class IntegratedPaymentsReaderStepListener implements StepExecutionListen
 
             if (applyEncrypt) {
                 PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-                Resource[] resources = resolver.getResources(errorDir.concat("/*.csv"));
+                Resource[] resources = resolver.getResources(errorDir.concat("/*.xls"));
                 Resource publicKey = resolver.getResource(publicKeyDir);
                 for (Resource resource : resources) {
                     FileInputStream publicKeyIS = null;
                     FileOutputStream outputFOS = null;
                     try {
                         if (resource.getFilename().contains(filename[filename.length - 1]
-                                .replaceAll(".csv", "")
+                                .replaceAll(".xls", "")
                                 .replaceAll(".pgp", ""))) {
                             publicKeyIS = new FileInputStream(publicKey.getFile());
                             outputFOS = new FileOutputStream(resource.getFile()

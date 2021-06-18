@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode(of = {"uniqueID"}, callSuper = false)
 public class IntegratedPayments {
 
 
@@ -20,9 +19,9 @@ public class IntegratedPayments {
 
     Long awardPeriodId;
 
-    String ticketId;
+    Long ticketId;
 
-    String relatedPaymentId;
+    Long relatedPaymentId;
 
     BigDecimal amount;
 

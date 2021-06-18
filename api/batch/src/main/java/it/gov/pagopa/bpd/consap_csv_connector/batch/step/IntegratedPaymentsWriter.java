@@ -53,15 +53,15 @@ public class IntegratedPaymentsWriter implements ItemWriter<InboundIntegratedPay
         ApplicationContext applicationContext = BaseContextHolder.getApplicationContext();
         applicationContext.setUserId(BATCH_CONSAP_CSV_CONNECTOR_NAME);
 
-        String fileName = !inboundIntegratedPayment.isEmpty() ?
-                inboundIntegratedPayment.get(0).getFilename().substring(inboundIntegratedPayment.get(0)
-                        .getFilename().lastIndexOf('/') + 1) :
-                null;
+//        String fileName = !inboundIntegratedPayment.isEmpty() ?
+//                inboundIntegratedPayment.get(0).getFilename().substring(inboundIntegratedPayment.get(0)
+//                        .getFilename().lastIndexOf('/') + 1) :
+//                null;
 
         inboundIntegratedPayment.forEach(inboundIntegratedPayments -> executor.execute(() -> {
             try {
                 applicationContext.setRequestId(String.format("%s:%d",
-                        fileName,
+                        "fileName",
                         inboundIntegratedPayments.getLineNumber()));
                 BaseContextHolder.forceSetApplicationContext(applicationContext);
                 IntegratedPayments integratedPayments = mapper.map(inboundIntegratedPayments, applyHashing);

@@ -62,10 +62,9 @@ public class IntegratedPaymentsItemProcessListener implements ItemProcessListene
 
     private String buildCsv(InboundIntegratedPayments inboundIntegratedPayments) {
         return (inboundIntegratedPayments.getFiscalCode() != null ? inboundIntegratedPayments.getFiscalCode() : "").concat(";")
-                .concat(inboundIntegratedPayments.getIban() != null ? inboundIntegratedPayments.getIban() : "").concat(";")
                 .concat(inboundIntegratedPayments.getAwardPeriodId() != null ? inboundIntegratedPayments.getAwardPeriodId().toString() : "").concat(";")
-                .concat(inboundIntegratedPayments.getTicketId() != null ? inboundIntegratedPayments.getTicketId() : "").concat(";")
-                .concat(inboundIntegratedPayments.getRelatedPaymentId() != null ? inboundIntegratedPayments.getRelatedPaymentId() : "").concat(";")
+                .concat(inboundIntegratedPayments.getTicketId() != null ? inboundIntegratedPayments.getTicketId().toString() : "").concat(";")
+                .concat(inboundIntegratedPayments.getRelatedPaymentId() != null ? inboundIntegratedPayments.getRelatedPaymentId().toString() : "").concat(";")
                 .concat(inboundIntegratedPayments.getAmount() != null ? inboundIntegratedPayments.getAmount().toString() : "").concat(";")
                 .concat(inboundIntegratedPayments.getCashbackAmount() != null ? inboundIntegratedPayments.getCashbackAmount().toString() : "").concat(";")
                 .concat(inboundIntegratedPayments.getCashbackAmount() != null ? inboundIntegratedPayments.getCashbackAmount().toString() : "").concat("\n");

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.BaseSpringTest;
 import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
-import it.gov.pagopa.bpd.award_winner.integration.event.CsvPaymentInfoPublisherConnector;
-import it.gov.pagopa.bpd.award_winner.integration.event.model.PaymentInfo;
+import it.gov.pagopa.bpd.award_winner.integration.event.CsvIntegratedPaymentsPublisherConnector;
+import it.gov.pagopa.bpd.award_winner.integration.event.model.IntegratedPayments;
 import it.gov.pagopa.bpd.consap_csv_connector.service.trasformer.HeaderAwareRequestTransformer;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.junit.Assert;
@@ -18,60 +18,58 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
-/**
- * Class for unit testing of {@link CsvPaymentInfoPublisherService}
- */
-@ContextConfiguration(classes = CsvPaymentInfoPublisherServiceImpl.class)
-public class CsvPaymentInfoPublisherServiceTest extends BaseSpringTest {
+@ContextConfiguration(classes = CsvIntegratedPaymentsPublisherServiceImpl.class)
+public class CsvIntegratedPaymentsPublisherServiceTest extends BaseSpringTest {
 
     @SpyBean
     ObjectMapper objectMapper;
 
     @MockBean
-    private CsvPaymentInfoPublisherConnector csvPaymentInfoPublisherConnectorMock;
+    private CsvIntegratedPaymentsPublisherConnector csvIntegratedPaymentsPublisherConnectorMock;
 
     @SpyBean
-    private HeaderAwareRequestTransformer<PaymentInfo> headerAwareRequestTransformerSpy;
+    private HeaderAwareRequestTransformer<IntegratedPayments> headerAwareRequestTransformerSpy;
 
     @SpyBean
-    private SimpleEventRequestTransformer<PaymentInfo> simpleEventRequestTransformerSpy;
+    private SimpleEventRequestTransformer<IntegratedPayments> simpleEventRequestTransformerSpy;
 
     @SpyBean
     private SimpleEventResponseTransformer simpleEventResponseTransformerSpy;
 
     @Autowired
-    CsvPaymentInfoPublisherService csvPaymentInfoPublisherService;
+    CsvIntegratedPaymentsPublisherService csvIntegratedPaymentsPublisherService;
 
-    private PaymentInfo paymentInfo;
+    private IntegratedPayments integratedPayments;
 
     @Before
     public void setUp() throws Exception {
         Mockito.reset(
-                csvPaymentInfoPublisherConnectorMock,
+                csvIntegratedPaymentsPublisherConnectorMock,
                 headerAwareRequestTransformerSpy,
                 simpleEventRequestTransformerSpy,
                 simpleEventResponseTransformerSpy);
-        paymentInfo = getRequestObject();
+        integratedPayments = getRequestObject();
     }
 
     @Test
     public void publishPaymentInfoEvent() {
         RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add("PAYMENT_INFO_VALIDATION_DATETIME", "PAYMENT_INFO_VALIDATION_DATETIME".getBytes(StandardCharsets.UTF_8));
+        recordHeaders.add("INTEGRATED_PAYMENT_VALIDATION_DATETIME", "INTEGRATED_PAYMENT_VALIDATION_DATETIME".getBytes(StandardCharsets.UTF_8));
 
         BDDMockito.doReturn(true)
-                .when(csvPaymentInfoPublisherConnectorMock)
-                .doCall(Mockito.eq(paymentInfo),
+                .when(csvIntegratedPaymentsPublisherConnectorMock)
+                .doCall(Mockito.eq(integratedPayments),
                         Mockito.eq(headerAwareRequestTransformerSpy),
                         Mockito.eq(simpleEventResponseTransformerSpy),
                         Mockito.any());
 
         try {
-            csvPaymentInfoPublisherService.publishPaymentInfoEvent(paymentInfo);
-            BDDMockito.verify(csvPaymentInfoPublisherConnectorMock,Mockito.atLeastOnce())
-                    .doCall(Mockito.eq(paymentInfo),
+            csvIntegratedPaymentsPublisherService.publishIntegratedPaymentsEvent(integratedPayments);
+            BDDMockito.verify(csvIntegratedPaymentsPublisherConnectorMock,Mockito.atLeastOnce())
+                    .doCall(Mockito.eq(integratedPayments),
                             Mockito.eq(headerAwareRequestTransformerSpy),
                             Mockito.eq(simpleEventResponseTransformerSpy),
                             Mockito.any());
@@ -82,14 +80,15 @@ public class CsvPaymentInfoPublisherServiceTest extends BaseSpringTest {
 
     }
 
-    protected PaymentInfo getRequestObject() {
-        return PaymentInfo.builder()
-                .uniqueID("000000001")
-                .result("ORDINE ESEGUITO")
-                .resultReason("result reason")
-                .cro("17270006101")
-                .executionDate("27/07/2021")
+    protected IntegratedPayments getRequestObject() {
+        return IntegratedPayments.builder()
+                .fiscalCode("fiscalCode")
+                .awardPeriodId(1L)
+                .ticketId(2L)
+                .relatedPaymentId(10L)
+                .amount(new BigDecimal(12))
+                .cashbackAmount(new BigDecimal(52))
+                .jackpotAmount(new BigDecimal(100))
                 .build();
     }
-
 }

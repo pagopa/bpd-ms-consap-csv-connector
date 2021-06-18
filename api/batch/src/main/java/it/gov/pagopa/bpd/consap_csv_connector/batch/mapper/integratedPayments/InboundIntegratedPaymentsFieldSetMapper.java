@@ -41,10 +41,9 @@ public class InboundIntegratedPaymentsFieldSetMapper implements FieldSetMapper<I
         InboundIntegratedPayments inboundIntegratedPayments =
                 InboundIntegratedPayments.builder()
                         .fiscalCode(fieldSet.readString("fiscalCode"))
-                        .iban(fieldSet.readString("iban"))
                         .awardPeriodId(fieldSet.readLong("awardPeriodId"))
-                        .ticketId(fieldSet.readString("ticketId"))
-                        .relatedPaymentId(fieldSet.readString("relatedPaymentId"))
+                        .ticketId(fieldSet.readLong("ticketId"))
+                        .relatedPaymentId(fieldSet.readLong("relatedPaymentId"))
                         .amount(fieldSet.readBigDecimal("amount"))
                         .cashbackAmount(fieldSet.readBigDecimal("cashbackAmount"))
                         .jackpotAmount(fieldSet.readBigDecimal("jackpotAmount"))

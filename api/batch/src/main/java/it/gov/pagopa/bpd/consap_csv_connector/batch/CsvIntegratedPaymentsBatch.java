@@ -1,7 +1,14 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch;
 
+import io.swagger.models.auth.In;
 import it.gov.pagopa.bpd.award_winner.integration.event.model.IntegratedPayments;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.exception.PGPDecryptException;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.RowMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.IntegratedCustomMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.Sheet;
+//import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.mapping.PassThroughRowMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.poi.PgpPoiItemReader;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.poi.PoiItemReader;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemProcessListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemReaderListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemWriterListener;
@@ -12,10 +19,10 @@ import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsReaderStepListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoFieldSetMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoLineMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.InboundIntegratedPaymentsFieldSetMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.InboundIntegratedPaymentsLineMapper;
+//import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.InboundIntegratedPaymentsFieldSetMapper;
+//import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.InboundIntegratedPaymentsLineMapper;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.IntegratedCustomMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundIntegratedPayments;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundPaymentInfo;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.step.*;
 import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
 import lombok.Data;
@@ -36,11 +43,6 @@ import org.springframework.batch.core.repository.support.JobRepositoryFactoryBea
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.LineMapper;
-import org.springframework.batch.item.file.mapping.FieldSetMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -176,11 +178,12 @@ public class CsvIntegratedPaymentsBatch {
      * The scheduler is based on a cron execution, based on the provided configuration
      * @throws  Exception
      */
-    @Scheduled(cron = "${batchConfiguration.CsvPaymentInfoReaderBatch.cron}")
+    @Scheduled(cron = "${batchConfiguration.CsvIntegratedPaymentsBatch.cron}")
     public void launchJob() throws Exception {
 
+
         Date startDate = new Date();
-        log.info("CsvPaymentInfoReader scheduled job started at {}", startDate);
+        log.info("CsvIntegratedPaymentsReader scheduled job started at {}", startDate);
 
         if (writerTrackerService == null) {
             createWriterTrackerService();
@@ -195,7 +198,7 @@ public class CsvIntegratedPaymentsBatch {
 
         Date endDate = new Date();
 
-        log.info("CsvPaymentInfoReader scheduled job ended at {}" , endDate);
+        log.info("CsvIntegratedPaymentsReader scheduled job ended at {}" , endDate);
         log.info("Completed in: {} (ms)", + (endDate.getTime() - startDate.getTime()));
 
     }
@@ -239,57 +242,25 @@ public class CsvIntegratedPaymentsBatch {
         return simpleJobLauncher;
     }
 
-    /**
-     *
-     * @return instance of the LineTokenizer to be used in the itemReader configured for the job
-     */
-    @Bean
-    public LineTokenizer integratedPaymentLineTokenizer() {
-        DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
-        delimitedLineTokenizer.setDelimiter(";");
-        delimitedLineTokenizer.setNames(
-                "uniqueID", "result", "resultReason", "cro", "executionDate");
-        return delimitedLineTokenizer;
-    }
 
-    /**
-     *
-     * @return instance of the FieldSetMapper to be used in the itemReader configured for the job
-     */
-    @Bean
-    public FieldSetMapper<InboundIntegratedPayments> integratedPaymentFieldSetMapper() {
-        return new InboundIntegratedPaymentsFieldSetMapper(timestampPattern);
-    }
-
-    /**
-     *
-     * @return instance of the LineMapper to be used in the itemReader configured for the job
-     */
-    public LineMapper<InboundIntegratedPayments> integratedPaymentLineMapper(String file) {
-        InboundIntegratedPaymentsLineMapper lineMapper = new InboundIntegratedPaymentsLineMapper();
-        lineMapper.setTokenizer(integratedPaymentLineTokenizer());
-        lineMapper.setFilename(file);
-        lineMapper.setFieldSetMapper(integratedPaymentFieldSetMapper());
-        return lineMapper;
-    }
-
-    /**
-     *
-     * @param file
-     *          Late-Binding parameter to be used as the resource for the reader instance
-     * @return instance of the itemReader to be used in the first step of the configured job
-     */
     @SneakyThrows
     @Bean
     @StepScope
-    public FlatFileItemReader<InboundIntegratedPayments> integratedPaymentItemReader(
+    public PgpPoiItemReader excelReader(
             @Value("#{stepExecutionContext['fileName']}") String file) {
-        PGPFlatFileItemReader flatFileItemReader = new PGPFlatFileItemReader(secretKeyPath, passphrase, applyDecrypt);
-        flatFileItemReader.setResource(new UrlResource(file));
-        flatFileItemReader.setLineMapper(integratedPaymentLineMapper(file));
+        PgpPoiItemReader flatFileItemReader = new PgpPoiItemReader(secretKeyPath, passphrase, applyDecrypt);
         flatFileItemReader.setLinesToSkip(linesToSkip);
+        flatFileItemReader.setResource(new UrlResource(file));
+        flatFileItemReader.setRowMapper(rowMapper());
         return flatFileItemReader;
     }
+
+    @Bean
+    public RowMapper<InboundIntegratedPayments> rowMapper() {
+        return new IntegratedCustomMapper();
+    }
+
+
 
     /**
      *
@@ -381,7 +352,7 @@ public class CsvIntegratedPaymentsBatch {
      */
     @Bean
     public Step integratedPaymentMasterStep() throws IOException {
-        return stepBuilderFactory.get("csv-payment-info-connector-master-step")
+        return stepBuilderFactory.get("csv-integrated-payments-connector-master-step")
                 .partitioner(integratedPaymentWorkerStep(writerTrackerService))
                 .partitioner("partition", integratedPaymentPartitioner())
                 .taskExecutor(integratedPaymentPartitionerTaskExecutor()).build();
@@ -398,8 +369,8 @@ public class CsvIntegratedPaymentsBatch {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String executionDate = OffsetDateTime.now().format(fmt);
 
-        return stepBuilderFactory.get("csv-payment-info-connector-master-inner-step").<InboundIntegratedPayments, InboundIntegratedPayments>chunk(chunkSize)
-                .reader(integratedPaymentItemReader(null))
+        return stepBuilderFactory.get("csv-integrated-payments-connector-master-inner-step").<InboundIntegratedPayments, InboundIntegratedPayments>chunk(chunkSize)
+                .reader(excelReader(null))
                 .processor(integratedPaymentItemProcessor())
                 .writer(getIntegratedPaymentItemWriter(integratedPaymentWriteListener(executionDate)))
                 .faultTolerant()
@@ -411,7 +382,6 @@ public class CsvIntegratedPaymentsBatch {
                 .listener(integratedPaymentWriteListener(executionDate))
                 .listener(integratedPaymentItemProcessListener(executionDate))
                 .listener(integratedPaymentsStepListener(writerTrackerService))
-                .taskExecutor(integratedPaymentReaderTaskExecutor())
                 .build();
     }
 

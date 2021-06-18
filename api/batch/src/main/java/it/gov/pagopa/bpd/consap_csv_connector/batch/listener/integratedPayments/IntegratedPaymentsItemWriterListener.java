@@ -52,7 +52,7 @@ public class IntegratedPaymentsItemWriterListener implements ItemWriteListener<I
                             resolver.getResource(errorPaymentInfosLogsPath).getFile().getAbsolutePath()
                                     .concat("/".concat(executionDate))
                                     + "_WriteErrorRecords_"+fileArr[fileArr.length-1]
-                                    .replaceAll(".csv","")
+                                    .replaceAll(".xls","")
                                     .replaceAll(".pgp","")+".csv");
                     FileUtils.writeStringToFile(
                             file, buildCsv(inboundIntegratedPayments), Charset.defaultCharset(), true);
@@ -84,7 +84,7 @@ public class IntegratedPaymentsItemWriterListener implements ItemWriteListener<I
                         resolver.getResource(errorPaymentInfosLogsPath).getFile().getAbsolutePath()
                                 .concat("/".concat(executionDate))
                                 + "_WriteErrorRecords_"+fileArr[fileArr.length-1]
-                                .replaceAll(".csv","")
+                                .replaceAll(".xls","")
                                 .replaceAll(".pgp","")+".csv");
                 FileUtils.writeStringToFile(
                         file, buildCsv(inboundIntegratedPayments), Charset.defaultCharset(), true);
@@ -98,10 +98,9 @@ public class IntegratedPaymentsItemWriterListener implements ItemWriteListener<I
 
     private String buildCsv(InboundIntegratedPayments inboundIntegratedPayments) {
         return (inboundIntegratedPayments.getFiscalCode() != null ? inboundIntegratedPayments.getFiscalCode() : "").concat(";")
-                .concat(inboundIntegratedPayments.getIban() != null ? inboundIntegratedPayments.getIban() : "").concat(";")
                 .concat(inboundIntegratedPayments.getAwardPeriodId() != null ? inboundIntegratedPayments.getAwardPeriodId().toString() : "").concat(";")
-                .concat(inboundIntegratedPayments.getTicketId() != null ? inboundIntegratedPayments.getTicketId() : "").concat(";")
-                .concat(inboundIntegratedPayments.getRelatedPaymentId() != null ? inboundIntegratedPayments.getRelatedPaymentId() : "").concat(";")
+                .concat(inboundIntegratedPayments.getTicketId() != null ? inboundIntegratedPayments.getTicketId().toString() : "").concat(";")
+                .concat(inboundIntegratedPayments.getRelatedPaymentId() != null ? inboundIntegratedPayments.getRelatedPaymentId().toString() : "").concat(";")
                 .concat(inboundIntegratedPayments.getAmount() != null ? inboundIntegratedPayments.getAmount().toString() : "").concat(";")
                 .concat(inboundIntegratedPayments.getCashbackAmount() != null ? inboundIntegratedPayments.getCashbackAmount().toString() : "").concat(";")
                 .concat(inboundIntegratedPayments.getCashbackAmount() != null ? inboundIntegratedPayments.getCashbackAmount().toString() : "").concat("\n");

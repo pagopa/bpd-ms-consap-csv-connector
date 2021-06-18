@@ -5,10 +5,10 @@ import eu.sia.meda.core.properties.PropertiesManager;
 import eu.sia.meda.event.configuration.ArchEventConfigurationService;
 import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
-import it.gov.pagopa.bpd.award_winner.integration.event.CsvPaymentInfoPublisherConnector;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.config.CsvPaymentInfoReaderTestConfig;
+import it.gov.pagopa.bpd.award_winner.integration.event.CsvIntegratedPaymentsPublisherConnector;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.config.CsvIntegratedPaymentsTestConfig;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.PGPDecryptUtil;
-import it.gov.pagopa.bpd.consap_csv_connector.service.CsvPaymentInfoPublisherService;
+import it.gov.pagopa.bpd.consap_csv_connector.service.CsvIntegratedPaymentsPublisherService;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
@@ -52,9 +52,6 @@ import java.util.Date;
 
 import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED;
 
-/**
- * Class for testing the CsvPaymentInfoReaderBatch class
- */
 @RunWith(SpringRunner.class)
 @SpringBatchTest
 @EmbeddedKafka(
@@ -69,7 +66,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
         "classpath:org/springframework/batch/core/schema-hsqldb.sql"})
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {
-        CsvPaymentInfoReaderTestConfig.class,
+        CsvIntegratedPaymentsTestConfig.class,
         JacksonAutoConfiguration.class,
         AuthenticationConfiguration.class,
         KafkaAutoConfiguration.class,
@@ -84,7 +81,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
 })
 @TestPropertySource(
         locations = {
-                "classpath:config/testCsvPaymentInfoPublisher.properties",
+                "classpath:config/testCsvIntegratedPaymentsPublisher.properties",
         },
         properties = {
                 "spring.main.allow-bean-definition-overriding=true",
@@ -104,7 +101,7 @@ import static org.springframework.transaction.annotation.Propagation.NOT_SUPPORT
                 "batchConfiguration.CsvPaymentInfoReaderBatch.linesToSkip=0",
                 "connectors.eventConfigurations.items.CsvPaymentInfoPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}"
         })
-public class CsvPaymentInfoReaderBatchTest {
+public class CsvIntegratedPaymentsBatchTest {
 
     @Autowired
     ArchEventConfigurationService archEventConfigurationService;
@@ -124,10 +121,10 @@ public class CsvPaymentInfoReaderBatchTest {
     private JobRepositoryTestUtils jobRepositoryTestUtils;
 
     @SpyBean
-    private CsvPaymentInfoPublisherConnector csvPaymentInfoPublisherConnectorSpy;
+    private CsvIntegratedPaymentsPublisherConnector csvPaymentInfoPublisherConnectorSpy;
 
     @SpyBean
-    private CsvPaymentInfoPublisherService csvPaymentInfoPublisherServiceSpy;
+    private CsvIntegratedPaymentsPublisherService csvPaymentInfoPublisherServiceSpy;
 
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder(
@@ -280,5 +277,4 @@ public class CsvPaymentInfoReaderBatchTest {
     public void tearDown() {
         tempFolder.delete();
     }
-
 }

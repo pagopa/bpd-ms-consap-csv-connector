@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode(of = {"uniqueID"}, callSuper = false)
 public class InboundIntegratedPayments {
 
     @NotNull
@@ -22,18 +21,11 @@ public class InboundIntegratedPayments {
     String fiscalCode;
 
     @NotNull
-    @NotBlank
-    String iban;
-
-    @NotNull
-    @NotBlank
     Long awardPeriodId;
 
-    @NotNull
-    @NotBlank
-    String ticketId;
+    Long ticketId;
 
-    String relatedPaymentId;
+    Long relatedPaymentId;
 
     @NotNull
     BigDecimal amount;
@@ -41,7 +33,7 @@ public class InboundIntegratedPayments {
     @NotNull
     BigDecimal cashbackAmount;
 
-    @NotNull
+
     BigDecimal jackpotAmount;
 
 
