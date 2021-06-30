@@ -3,12 +3,10 @@ package it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.RowMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.support.rowset.RowSet;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundIntegratedPayments;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 
 public class IntegratedCustomMapper implements RowMapper<InboundIntegratedPayments> {
-
 
     @Override
     public InboundIntegratedPayments mapRow(RowSet rs) throws Exception {
@@ -22,11 +20,9 @@ public class IntegratedCustomMapper implements RowMapper<InboundIntegratedPaymen
         inboundIntegratedPayments.setAmount(new BigDecimal((row[4]).replace(",", ".")));
         inboundIntegratedPayments.setCashbackAmount(new BigDecimal((row[5]).replace(",", ".")));
         inboundIntegratedPayments.setJackpotAmount(new BigDecimal((row[6]).replace(",", ".")));
-        inboundIntegratedPayments.setFilename(setFileName(""));
+        inboundIntegratedPayments.setFilename("CONSAP_BANKT_FLUSSI_INTEGRATIVI.xslx");
         return inboundIntegratedPayments;
     }
 
-    private String setFileName(@Value("#{stepExecutionContext['fileName']}") String fileName) {
-        return fileName;
-    }
+
 }
