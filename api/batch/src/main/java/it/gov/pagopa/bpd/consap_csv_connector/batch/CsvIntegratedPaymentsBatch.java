@@ -1,29 +1,18 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch;
 
-import io.swagger.models.auth.In;
-import it.gov.pagopa.bpd.award_winner.integration.event.model.IntegratedPayments;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.encryption.exception.PGPDecryptException;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.RowMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.IntegratedCustomMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.Sheet;
-//import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.mapping.PassThroughRowMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.poi.PgpPoiItemReader;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.poi.PoiItemReader;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemProcessListener;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemReaderListener;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoItemWriterListener;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.PaymentInfoReaderStepListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsItemProcessListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsItemReaderListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsItemWriterListener;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.listener.integratedPayments.IntegratedPaymentsReaderStepListener;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoFieldSetMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.InboundPaymentInfoLineMapper;
-//import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.InboundIntegratedPaymentsFieldSetMapper;
-//import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.InboundIntegratedPaymentsLineMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.IntegratedCustomMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundIntegratedPayments;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.step.*;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.step.ArchivalTasklet;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.step.InboundIntegratedPaymentsItemProcessor;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.step.IntegratedPaymentsWriter;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.step.TerminationTasklet;
 import it.gov.pagopa.bpd.consap_csv_connector.service.WriterTrackerService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -466,8 +455,7 @@ public class CsvIntegratedPaymentsBatch {
 
 
     /**
-     *
-     * @return instance of a job for payment info processing
+     * @return instance of a job for integrated payment processing
      */
     @SneakyThrows
     @Bean

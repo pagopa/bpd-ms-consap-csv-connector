@@ -17,10 +17,11 @@ public class PoiItemReader<T> extends AbstractExcelItemReader<T> {
     private Workbook workbook;
 
     private InputStream inputStream;
+    private String filename;
 
     @Override
     public Sheet getSheet(final int sheet) {
-        return new PoiSheet(this.workbook.getSheetAt(sheet));
+        return new PoiSheet(this.workbook.getSheetAt(0));
     }
 
     @Override
@@ -42,11 +43,16 @@ public class PoiItemReader<T> extends AbstractExcelItemReader<T> {
         }
     }
 
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
     /**
      * Open the underlying file using the {@code WorkbookFactory}. Prefer {@code File}
      * based access over an {@code InputStream}. Using a file will use fewer resources
      * compared to an input stream. The latter will need to cache the whole sheet
      * in-memory.
+     *
      * @param resource the {@code Resource} pointing to the Excel file.
      * @param password the password for opening the file
      * @throws Exception is thrown for any errors.

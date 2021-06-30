@@ -3,9 +3,9 @@ package it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.RowMapper;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.support.rowset.RowSet;
 import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundIntegratedPayments;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 
 public class IntegratedCustomMapper implements RowMapper<InboundIntegratedPayments> {
 
@@ -18,10 +18,15 @@ public class IntegratedCustomMapper implements RowMapper<InboundIntegratedPaymen
         inboundIntegratedPayments.setFiscalCode(row[0]);
         inboundIntegratedPayments.setAwardPeriodId(new Long(row[1]));
         inboundIntegratedPayments.setTicketId(new Long(row[2]));
-        inboundIntegratedPayments.setRelatedPaymentId(new Long(row[3]));
-        inboundIntegratedPayments.setAmount(new BigDecimal(row[4]));
-        inboundIntegratedPayments.setCashbackAmount(new BigDecimal(row[5]));
-        inboundIntegratedPayments.setJackpotAmount(new BigDecimal(row[6]));
+        inboundIntegratedPayments.setRelatedPaymentId(Long.parseLong(!row[3].toString().equals("null") ? row[3] : "0"));
+        inboundIntegratedPayments.setAmount(new BigDecimal((row[4]).replace(",", ".")));
+        inboundIntegratedPayments.setCashbackAmount(new BigDecimal((row[5]).replace(",", ".")));
+        inboundIntegratedPayments.setJackpotAmount(new BigDecimal((row[6]).replace(",", ".")));
+        inboundIntegratedPayments.setFilename(setFileName(""));
         return inboundIntegratedPayments;
+    }
+
+    private String setFileName(@Value("#{stepExecutionContext['fileName']}") String fileName) {
+        return fileName;
     }
 }
