@@ -182,7 +182,7 @@ public class CsvPaymentInfoReaderBatch {
         }
 
         paymentInfoJobLauncher().run(
-                job(), new JobParametersBuilder()
+                paymentInfoJob(), new JobParametersBuilder()
                         .addDate("startDateTime", startDate)
                         .toJobParameters());
 
@@ -200,7 +200,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return configured instance of TransactionManager
      */
     @Bean
-    public PlatformTransactionManager getTransactionManager() {
+    public PlatformTransactionManager getPaymentInfoTransactionManager() {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(dataSource);
         return dataSourceTransactionManager;
@@ -212,9 +212,9 @@ public class CsvPaymentInfoReaderBatch {
      * @throws Exception
      */
     @Bean
-    public JobRepository getJobRepository() throws Exception {
+    public JobRepository getPaymentInfoJobRepository() throws Exception {
             JobRepositoryFactoryBean jobRepositoryFactoryBean = new JobRepositoryFactoryBean();
-            jobRepositoryFactoryBean.setTransactionManager( getTransactionManager());
+            jobRepositoryFactoryBean.setTransactionManager( getPaymentInfoTransactionManager());
             jobRepositoryFactoryBean.setTablePrefix(tablePrefix);
             jobRepositoryFactoryBean.setDataSource(dataSource);
             jobRepositoryFactoryBean.setIsolationLevelForCreate(isolationForCreate);
@@ -230,7 +230,7 @@ public class CsvPaymentInfoReaderBatch {
     @Bean
     public JobLauncher paymentInfoJobLauncher() throws Exception {
         SimpleJobLauncher simpleJobLauncher = new SimpleJobLauncher();
-        simpleJobLauncher.setJobRepository(getJobRepository());
+        simpleJobLauncher.setJobRepository(getPaymentInfoJobRepository());
         return simpleJobLauncher;
     }
 
@@ -302,11 +302,11 @@ public class CsvPaymentInfoReaderBatch {
      */
     @Bean
     @StepScope
-    public ItemWriter<InboundPaymentInfo> getItemWriter(PaymentInfoItemWriterListener writerListener) {
+    public ItemWriter<InboundPaymentInfo> getPaymentInfoItemWriter(PaymentInfoItemWriterListener writerListener) {
         PaymentInfoWriter paymentInfoWriter = beanFactory.getBean(PaymentInfoWriter.class, writerTrackerService);
         paymentInfoWriter.setPaymentInfoItemWriterListener(writerListener);
         paymentInfoWriter.setApplyHashing(applyHashing);
-        paymentInfoWriter.setExecutor(writerExecutor());
+        paymentInfoWriter.setExecutor(paymentInfoWriterExecutor());
         paymentInfoWriter.setCheckpointFrequency(checkpointFrequency);
         paymentInfoWriter.setEnableCheckpointFrequency(enableCheckpointFrequency);
         return paymentInfoWriter;
@@ -331,7 +331,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return step instance based on the tasklet to be used for file archival at the end of the reading process
      */
     @Bean
-    public Step archivalTask() {
+    public Step paymentInfoArchivalTask() {
         ArchivalTasklet archivalTasklet = new ArchivalTasklet();
         archivalTasklet.setSuccessPath(successArchivePath);
         archivalTasklet.setErrorPath(errorArchivePath);
@@ -348,8 +348,8 @@ public class CsvPaymentInfoReaderBatch {
      */
     public FlowJobBuilder paymentInfoJobBuilder() throws Exception {
         return jobBuilderFactory.get(jobName)
-                .repository(getJobRepository())
-                .start(masterStep()).on("*").to(archivalTask())
+                .repository(getPaymentInfoJobRepository())
+                .start(paymentInfoMasterStep()).on("*").to(paymentInfoArchivalTask())
                 .build();
     }
 
@@ -360,7 +360,7 @@ public class CsvPaymentInfoReaderBatch {
      */
     @Bean
     @JobScope
-    public Partitioner partitioner() throws IOException {
+    public Partitioner paymentInfoPartitioner() throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         partitioner.setResources(resolver.getResources(directoryPath));
@@ -375,11 +375,11 @@ public class CsvPaymentInfoReaderBatch {
      * @throws Exception
      */
     @Bean
-    public Step masterStep() throws IOException {
+    public Step paymentInfoMasterStep() throws IOException {
         return stepBuilderFactory.get("csv-payment-info-connector-master-step")
-                .partitioner(workerStep(writerTrackerService))
-                .partitioner("partition", partitioner())
-                .taskExecutor(partitionerTaskExecutor()).build();
+                .partitioner(paymentInfoWorkerStep(writerTrackerService))
+                .partitioner("partition", paymentInfoPartitioner())
+                .taskExecutor(paymentInfoPartitionerTaskExecutor()).build();
     }
 
     /**
@@ -389,14 +389,14 @@ public class CsvPaymentInfoReaderBatch {
      * @throws Exception
      */
     @Bean
-    public TaskletStep workerStep(WriterTrackerService writerTrackerService) {
+    public TaskletStep paymentInfoWorkerStep(WriterTrackerService writerTrackerService) {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
         String executionDate = OffsetDateTime.now().format(fmt);
 
         return stepBuilderFactory.get("csv-payment-info-connector-master-inner-step").<InboundPaymentInfo, InboundPaymentInfo>chunk(chunkSize)
                 .reader(paymentInfoItemReader(null))
                 .processor(paymentInfoItemProcessor())
-                .writer(getItemWriter(paymentInfoItemWriteListener(executionDate)))
+                .writer(getPaymentInfoItemWriter(paymentInfoItemWriteListener(executionDate)))
                 .faultTolerant()
                 .skipLimit(skipLimit)
                 .noSkip(FileNotFoundException.class)
@@ -461,7 +461,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return bean configured for usage in the partitioner instance of the job
      */
     @Bean
-    public TaskExecutor partitionerTaskExecutor() {
+    public TaskExecutor paymentInfoPartitionerTaskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setMaxPoolSize(partitionerMaxPoolSize);
         taskExecutor.setCorePoolSize(partitionerCorePoolSize);
@@ -474,7 +474,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return bean configured for usage for chunk reading of a single file
      */
     @Bean
-    public Executor writerExecutor() {
+    public Executor paymentInfoWriterExecutor() {
         if (this.executorService == null) {
             executorService =  Executors.newFixedThreadPool(executorPoolSize);
         }
@@ -500,7 +500,7 @@ public class CsvPaymentInfoReaderBatch {
      */
     @SneakyThrows
     @Bean
-    public Job job() {
+    public Job paymentInfoJob() {
         return paymentInfoJobBuilder().build();
     }
 
@@ -509,7 +509,7 @@ public class CsvPaymentInfoReaderBatch {
      * @return bean for a ThreadPoolTaskScheduler
      */
     @Bean
-    public TaskScheduler poolScheduler() {
+    public TaskScheduler paymentInfoPoolScheduler() {
         return new ThreadPoolTaskScheduler();
     }
 
