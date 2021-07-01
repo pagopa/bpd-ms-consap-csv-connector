@@ -1,6 +1,7 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.config;
 
 import it.gov.pagopa.bpd.consap_csv_connector.batch.CsvIntegratedPaymentsBatch;
+import it.gov.pagopa.bpd.consap_csv_connector.batch.CsvPaymentIntegrationReaderBatch;
 import it.gov.pagopa.bpd.consap_csv_connector.connector.config.CsvConsapConnectorBatchJpaConfig;
 import it.gov.pagopa.bpd.consap_csv_connector.connector.config.csvIntegratedPaymentsBatchJpaConfig;
 import org.springframework.context.annotation.ComponentScan;
