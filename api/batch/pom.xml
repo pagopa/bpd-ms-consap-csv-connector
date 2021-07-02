@@ -5,12 +5,12 @@
     <parent>
         <artifactId>bpd-ms-consap-csv-connector-api</artifactId>
         <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector.api</groupId>
-        <version>cen_115_131_rc1</version>
+        <version>cen_115_131_rc2</version>
     </parent>
 
     <groupId>it.gov.pagopa.bpd.ms.consap_csv_connector.api</groupId>
     <artifactId>bpd-ms-consap-csv-connector-api-batch</artifactId>
-    <version>cen_115_131_rc1</version>
+    <version>cen_115_131_rc2</version>
 
     <dependencies>
         <dependency>
