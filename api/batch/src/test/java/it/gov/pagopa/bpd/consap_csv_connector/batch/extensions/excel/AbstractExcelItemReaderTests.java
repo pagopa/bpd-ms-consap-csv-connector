@@ -55,7 +55,7 @@ public abstract class AbstractExcelItemReaderTests {
         }
         while (row != null);
         Integer readCount = (Integer) ReflectionTestUtils.getField(this.itemReader, "currentItemCount");
-        assertThat(readCount).isEqualTo(1);
+        assertThat(readCount).isEqualTo(3);
     }
 
     @Test

@@ -23,7 +23,7 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
 
     private int linesToSkip = 0;
 
-    private int currentSheet = 1;
+    private int currentSheet = 0;
 
     private int endAfterBlankLines = 1;
 
@@ -90,7 +90,10 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
             this.rs.next();
         }
         try {
-            return (this.rs.getCurrentRow() != null) ? this.rowMapper.mapRow(this.rs) : null;
+            if (this.currentSheet == sheetNumber) {
+                return (this.rs.getCurrentRow() != null) ? this.rowMapper.mapRow(this.rs) : null;
+            }
+            return null;
         }
         catch (Exception ex) {
             throw new ExcelFileParseException("Exception parsing Excel file.", ex, this.resource.getDescription(),
