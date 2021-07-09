@@ -23,7 +23,7 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
 
     private int linesToSkip = 0;
 
-    private int currentSheet = 0;
+    private int currentSheet = 1;
 
     private int endAfterBlankLines = 1;
 

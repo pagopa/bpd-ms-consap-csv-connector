@@ -1,8 +1,6 @@
 package it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel;
 
 import it.gov.pagopa.bpd.consap_csv_connector.batch.extensions.excel.mapping.PassThroughRowMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.mapper.integratedPayments.IntegratedCustomMapper;
-import it.gov.pagopa.bpd.consap_csv_connector.batch.model.InboundIntegratedPayments;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +28,7 @@ public abstract class AbstractExcelItemReaderTests {
         configureItemReader(this.itemReader);
         this.itemReader.afterPropertiesSet();
         ExecutionContext executionContext = new ExecutionContext();
+        this.itemReader.setSheetNumber(1);
         this.itemReader.open(executionContext);
     }
 
@@ -56,7 +55,7 @@ public abstract class AbstractExcelItemReaderTests {
         }
         while (row != null);
         Integer readCount = (Integer) ReflectionTestUtils.getField(this.itemReader, "currentItemCount");
-        assertThat(readCount).isEqualTo(3);
+        assertThat(readCount).isEqualTo(1);
     }
 
     @Test
