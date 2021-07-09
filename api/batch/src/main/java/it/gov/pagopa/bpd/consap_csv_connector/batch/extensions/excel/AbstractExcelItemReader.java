@@ -7,11 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 @Slf4j
+@PropertySource("classpath:config/csvIntegratedPaymentsBatch.properties")
 public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingItemStreamItemReader<T>
         implements ResourceAwareItemReaderItemStream<T>, InitializingBean {
 
@@ -38,6 +41,9 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
 
     private String password;
 
+    @Value("${batchConfiguration.CsvIntegratedPaymentsBatch.sheetNumber}")
+    private Integer sheetNumber;
+
     public AbstractExcelItemReader() {
         super();
         this.setName(ClassUtils.getShortName(this.getClass()));
@@ -63,6 +69,10 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
     @Override
     protected T doRead() {
         if (this.noInput) {
+            return null;
+        }
+
+        if (this.currentSheet > sheetNumber) {
             return null;
         }
 
@@ -141,7 +151,7 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
 
         this.openExcelFile(this.resource, this.password);
         this.noInput = false;
-        if (log.isDebugEnabled()) {
+        if (log.isDebugEnabled() && this.currentSheet < sheetNumber) {
             log.debug("Opened workbook [" + this.resource.getFilename() + "] with " + this.getNumberOfSheets()
                     + " sheets.");
         }
@@ -151,7 +161,7 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
         while (this.currentSheet < this.getNumberOfSheets()) {
             final Sheet sheet = this.getSheet(this.currentSheet);
             this.rs = this.rowSetFactory.create(sheet);
-            if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled() && this.currentSheet < sheetNumber) {
                 log.debug("Opening sheet " + sheet.getName() + ".");
             }
 
@@ -160,7 +170,7 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
                     this.skippedRowsCallback.handleRow(this.rs);
                 }
             }
-            if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled() && this.currentSheet < sheetNumber) {
                 log.debug("Openend sheet " + sheet.getName() + ", with " + sheet.getNumberOfRows() + " rows.");
             }
             this.currentSheet++;
@@ -262,9 +272,14 @@ public abstract class AbstractExcelItemReader <T> extends AbstractItemCountingIt
 
     /**
      * The password used to protect the file to open.
+     *
      * @param password the password
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setSheetNumber(final int sheetNumber) {
+        this.sheetNumber = sheetNumber;
     }
 }
