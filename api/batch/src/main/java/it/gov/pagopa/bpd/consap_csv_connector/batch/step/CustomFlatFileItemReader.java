@@ -150,11 +150,11 @@ public class CustomFlatFileItemReader<T> extends FlatFileItemReader<T> {
         }
     }
 
-    private boolean isComment(String line) {
+    public boolean isComment(String line) {
         String[] var2 = this.comments;
         int var3 = var2.length;
 
-        for(int var4 = 0; var4 < var3; ++var4) {
+        for (int var4 = 0; var4 < var3; ++var4) {
             String prefix = var2[var4];
             if (line.startsWith(prefix)) {
                 return true;
